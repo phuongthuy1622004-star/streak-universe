@@ -1,4 +1,4 @@
-const APP_VERSION = '10';
+const APP_VERSION = '11';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -597,7 +597,7 @@ class AppController {
       const lng  = goal.streak?.longest_streak  ?? 0;
       const cat  = CATS[goal.category] ?? CATS.other;
       const freq = parseInt(goal.frequency, 10) || 1;
-      const freqLabel = freq === 1 ? '1 ngày / 1 lần' : `${freq} ngày / 1 lần`;
+      const freqLabel = freq === 1 ? 'Every day' : `Every ${freq} days`;
       const themeClass = 'card-theme-' + (goal.theme || 'garden');
       const iconCls = THEME_ICON_CLS[goal.theme] || THEME_ICON_CLS.garden;
 
