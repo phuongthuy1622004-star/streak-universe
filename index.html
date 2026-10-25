@@ -28,7 +28,7 @@
         <div>
           <div class="flex items-center gap-1.5">
             <h1 class="text-sm font-black tracking-tight bg-gradient-to-r from-amber-600 via-rose-600 to-indigo-600 bg-clip-text text-transparent">STREAK UNIVERSE</h1>
-            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-indigo-600 leading-none">v8</span>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-indigo-600 leading-none">v9</span>
           </div>
           <p class="text-[10px] text-slate-400 font-medium">Habits & Gamified Worlds</p>
         </div>
@@ -78,7 +78,7 @@
 
   <!-- FOOTER -->
   <footer class="py-4 text-center text-[10px] text-slate-400">
-    Streak Universe • <span class="font-semibold text-slate-500">v8</span>
+    Streak Universe • <span class="font-semibold text-slate-500">v9</span>
   </footer>
 
   <!-- ============================================================
@@ -128,25 +128,25 @@
           <input type="text" id="formDailyTarget" placeholder="e.g., 30 mins, 5 km, 10 pages" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 font-medium placeholder-slate-400 text-xs focus:ring-2 focus:ring-indigo-500/50" />
         </div>
 
-        <!-- Milestone + Deadline -->
+        <!-- Frequency + Deadline -->
         <div class="grid grid-cols-2 gap-2.5">
           <div>
             <div class="flex items-center h-5 mb-1">
-              <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Milestone</label>
+              <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Frequency</label>
             </div>
-            <select id="formTargetStreak" class="w-full h-10 px-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 font-medium text-xs focus:ring-2 focus:ring-indigo-500/50 box-border">
-              <option value="7">7 days</option>
-              <option value="21">21 days</option>
-              <option value="30" selected>30 days</option>
-              <option value="60">60 days</option>
-              <option value="100">100 days</option>
-              <option value="365">365 days</option>
+            <select id="formFrequency" class="w-full h-10 px-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 font-medium text-xs focus:ring-2 focus:ring-indigo-500/50 box-border">
+              <option value="1" selected>1 ngày / 1 lần</option>
+              <option value="2">2 ngày / 1 lần</option>
+              <option value="3">3 ngày / 1 lần</option>
+              <option value="4">4 ngày / 1 lần</option>
+              <option value="5">5 ngày / 1 lần</option>
+              <option value="6">6 ngày / 1 lần</option>
+              <option value="7">7 ngày / 1 lần</option>
             </select>
           </div>
           <div>
-            <div class="flex items-center justify-between h-5 mb-1">
+            <div class="flex items-center h-5 mb-1">
               <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Deadline</label>
-              <button type="button" id="btnAutoDeadline" class="text-[10px] font-bold text-indigo-600 hover:opacity-80">⚡ Auto</button>
             </div>
             <input type="date" id="formDeadline" class="w-full h-10 px-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 font-medium text-xs focus:ring-2 focus:ring-indigo-500/50 box-border" />
           </div>
@@ -272,6 +272,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

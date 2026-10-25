@@ -1,4 +1,4 @@
-const APP_VERSION = '8';
+const APP_VERSION = '9';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -194,21 +194,29 @@ class StreakEngine {
     return pool[Math.abs(h) % pool.length];
   }
 
-  /** Rule 1+2: idempotent check-in with 1-day grace */
+  /** Rule 1+2: idempotent check-in with frequency + 1-day grace */
   static recordDailyCompletion(goal, today = new Date()) {
     const todayStr = this.formatDate(today);
     if (goal.streak?.last_completed_date === todayStr) return { isNewDay: false, graceApplied: false };
 
-    const yest = new Date(today); yest.setDate(yest.getDate() - 1);
-    const d2   = new Date(today); d2.setDate(d2.getDate() - 2);
-
+    const freq = parseInt(goal.frequency, 10) || 1;
     let next = goal.streak?.current_streak ?? 0;
     let graceApplied = false;
     const last = goal.streak?.last_completed_date ?? null;
 
-    if (last === this.formatDate(yest))      { next += 1; }
-    else if (last === this.formatDate(d2))   { next += 1; graceApplied = true; }
-    else                                      { next = 1; }
+    if (last) {
+      const diff = this.diffDays(this.parseDate(last), today);
+      if (diff <= freq) {
+        next += 1;
+      } else if (diff === freq + 1) {
+        next += 1;
+        graceApplied = true;
+      } else {
+        next = 1;
+      }
+    } else {
+      next = 1;
+    }
 
     const longest = Math.max(goal.streak?.longest_streak ?? 0, next);
     goal.streak = { current_streak: next, longest_streak: longest, last_completed_date: todayStr };
@@ -225,22 +233,23 @@ class StreakEngine {
     if (!goal.streak?.last_completed_date) return;
     const last = this.parseDate(goal.streak.last_completed_date);
     if (!last) return;
-    if (this.diffDays(last, today) > 2 && goal.streak.current_streak > 0)
+    const freq = parseInt(goal.frequency, 10) || 1;
+    if (this.diffDays(last, today) > (freq + 1) && goal.streak.current_streak > 0)
       goal.streak.current_streak = 0;
   }
 
-  /** Section 4: Self-Heal from audit trail */
-  static recalculateStreakFromDates(dates, today = new Date()) {
+  /** Section 4: Recalculate streak from dates with frequency */
+  static recalculateStreakFromDates(dates, frequency = 1, today = new Date()) {
     if (!dates?.length) return { current_streak: 0, longest_streak: 0, last_completed_date: '' };
     const sorted = [...new Set(dates)].sort();
     let cur = 1, max = 1;
     for (let i = 1; i < sorted.length; i++) {
       const d = this.diffDays(this.parseDate(sorted[i-1]), this.parseDate(sorted[i]));
-      if (d === 1 || d === 2) { cur++; } else { cur = 1; }
+      if (d <= frequency + 1) { cur++; } else { cur = 1; }
       max = Math.max(max, cur);
     }
     const last = sorted[sorted.length - 1];
-    const active = this.diffDays(this.parseDate(last), today) > 2 ? 0 : cur;
+    const active = this.diffDays(this.parseDate(last), today) > (frequency + 1) ? 0 : cur;
     return { current_streak: active, longest_streak: max, last_completed_date: last };
   }
 
@@ -385,8 +394,7 @@ class AppController {
     this.formTargetMode   = document.getElementById('formTargetMode'); // <select>
     this.customTargetBox  = document.getElementById('customTargetInputContainer');
     this.formDailyTarget  = document.getElementById('formDailyTarget');
-    this.formTargetStreak = document.getElementById('formTargetStreak');
-    this.btnAutoDeadline  = document.getElementById('btnAutoDeadline');
+    this.formFrequency    = document.getElementById('formFrequency');
     this.formDeadline     = document.getElementById('formDeadline');
 
     // World modal
@@ -428,14 +436,6 @@ class AppController {
       } else {
         this.customTargetBox.classList.add('hidden');
       }
-    });
-
-    // ⚡ Auto deadline
-    this.btnAutoDeadline.addEventListener('click', () => {
-      const days = parseInt(this.formTargetStreak.value, 10) || 30;
-      const d = new Date(); d.setDate(d.getDate() + days);
-      this.formDeadline.value = StreakEngine.formatDate(d);
-      this.showToast(`⚡ Deadline: ${this.formDeadline.value} (${days}d from today)`);
     });
 
     // Theme radio visual
@@ -567,8 +567,8 @@ class AppController {
       const cur  = goal.streak?.current_streak  ?? 0;
       const lng  = goal.streak?.longest_streak  ?? 0;
       const cat  = CATS[goal.category] ?? CATS.other;
-      const ts   = goal.target_streak || 30;
-      const prog = Math.min(100, Math.round(cur / ts * 100));
+      const freq = parseInt(goal.frequency, 10) || 1;
+      const freqLabel = freq === 1 ? '1 ngày / 1 lần' : `${freq} ngày / 1 lần`;
       const themeClass = 'card-theme-' + (goal.theme || 'garden');
       const iconCls = THEME_ICON_CLS[goal.theme] || THEME_ICON_CLS.garden;
 
@@ -581,8 +581,8 @@ class AppController {
       }
 
       const targetTxt = goal.daily_target
-        ? `<strong>Daily:</strong> ${this.esc(goal.daily_target)}`
-        : `<strong>Daily:</strong> Tick ✓`;
+        ? `<strong>Target:</strong> ${this.esc(goal.daily_target)}`
+        : `<strong>Target:</strong> Tick ✓`;
 
       return `
         <div class="${themeClass} rounded-2xl p-4 sm:p-5 flex flex-col gap-3 transition-all duration-200 group">
@@ -600,19 +600,17 @@ class AppController {
 
           <div>
             <h3 class="text-base font-extrabold text-slate-800 tracking-tight leading-snug">${this.esc(goal.title)}</h3>
-            <p class="text-xs text-slate-600 font-medium mt-1">${targetTxt}</p>
-            <div class="mt-2.5">
-              <div class="flex justify-between items-center text-[11px] mb-1">
-                ${prog >= 100 
-                  ? `<span class="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300">🏆 Milestone Achieved!</span>`
-                  : `<span class="text-slate-600 font-semibold">Goal: ${ts}d</span>`
-                }
-                <span class="font-bold text-indigo-600">${prog}%</span>
-              </div>
-              <div class="h-2 bg-slate-200/80 rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-500 rounded-full transition-all" style="width:${prog}%"></div>
-              </div>
+            <div class="flex items-center gap-2 flex-wrap text-xs text-slate-600 mt-1.5">
+              <span>${targetTxt}</span>
+              <span class="text-slate-300">•</span>
+              <span class="font-semibold text-slate-700">📅 ${freqLabel}</span>
             </div>
+            ${goal.deadline ? `
+              <div class="mt-2 text-[11px] font-medium text-slate-600 flex items-center justify-between bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200">
+                <span>Deadline: <strong class="text-slate-800 font-semibold">${goal.deadline}</strong></span>
+                ${dlBadge}
+              </div>
+            ` : ''}
           </div>
 
           <div class="flex items-center justify-between pt-2.5 border-t border-slate-200/60">
@@ -653,7 +651,7 @@ class AppController {
     // REVERSE / UNDO TODAY'S COMPLETION
     if (isCompletedToday) {
       goal.streak_dates = (goal.streak_dates || []).filter(d => d !== todayStr);
-      goal.streak = StreakEngine.recalculateStreakFromDates(goal.streak_dates);
+      goal.streak = StreakEngine.recalculateStreakFromDates(goal.streak_dates, goal.frequency || 1);
 
       SoundFX.playPop();
       this.renderStats();
@@ -699,8 +697,8 @@ class AppController {
         this.formTargetMode.value = 'tick';
       }
 
-      this.formTargetStreak.value = editing.target_streak || 30;
-      this.formDeadline.value     = editing.deadline || '';
+      this.formFrequency.value = editing.frequency || 1;
+      this.formDeadline.value  = editing.deadline || '';
 
       const themeRadio = document.querySelector(`input[name="goalTheme"][value="${editing.theme || 'garden'}"]`);
       if (themeRadio) themeRadio.checked = true;
@@ -709,7 +707,8 @@ class AppController {
       this.formGoalId.value = '';
       this.formGoalCategory.value  = 'study';
       this.formTargetMode.value    = 'tick';
-      this.formTargetStreak.value  = '30';
+      this.formFrequency.value     = '1';
+      this.formDeadline.value      = '';
       const def = document.querySelector('input[name="goalTheme"][value="garden"]');
       if (def) def.checked = true;
     }
@@ -731,16 +730,16 @@ class AppController {
     const category = this.formGoalCategory.value;
     const daily_target = this.formTargetMode.value === 'custom' && this.formDailyTarget.value.trim()
       ? this.formDailyTarget.value.trim() : '';
-    const deadline     = this.formDeadline.value;
-    const target_streak= parseInt(this.formTargetStreak.value, 10) || 30;
-    const theme        = document.querySelector('input[name="goalTheme"]:checked')?.value || 'garden';
+    const frequency= parseInt(this.formFrequency.value, 10) || 1;
+    const deadline = this.formDeadline.value;
+    const theme    = document.querySelector('input[name="goalTheme"]:checked')?.value || 'garden';
 
     const idx = this.goals.findIndex(g => g.id === id);
     if (idx >= 0) {
-      this.goals[idx] = { ...this.goals[idx], title, category, daily_target, deadline, target_streak, theme };
+      this.goals[idx] = { ...this.goals[idx], title, category, daily_target, deadline, frequency, theme };
       this.showToast('Goal updated ✅');
     } else {
-      this.goals.unshift({ id, title, category, daily_target, deadline, target_streak, theme,
+      this.goals.unshift({ id, title, category, daily_target, deadline, frequency, theme,
         created_at: StreakEngine.formatDate(),
         streak: { current_streak:0, longest_streak:0, last_completed_date:'' },
         streak_dates: [] });
