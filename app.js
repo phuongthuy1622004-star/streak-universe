@@ -1,4 +1,4 @@
-const APP_VERSION = '1.2.1';
+const APP_VERSION = '1.2.2';
 window.APP_VERSION = APP_VERSION;
  * - Multi-Goal System | English UI | Light theme default
  * - Idempotency + 1-Day Grace Period Streak Engine
