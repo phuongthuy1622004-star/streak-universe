@@ -371,8 +371,6 @@ class AppStorage {
 class AppController {
   constructor() {
     this.goals = [];
-    this.activeCategory = 'all';
-    this.searchQuery = '';
     this.currentWorldGoalId = null;
     this.currentWorldItems = [];
     this.deferredPrompt = null;
@@ -394,8 +392,6 @@ class AppController {
 
     this.goalsContainer = document.getElementById('goalsContainer');
     this.emptyState     = document.getElementById('emptyState');
-    this.searchInput    = document.getElementById('searchInput');
-    this.catFilter      = document.getElementById('categoryFilterContainer');
 
     // Goal modal
     this.goalModal     = document.getElementById('goalModal');
@@ -476,26 +472,6 @@ class AppController {
         this.customEmojiBox.classList.toggle('hidden', r.value !== 'custom' || !document.querySelector('input[name="goalTheme"][value="custom"]').checked);
         this._styleThemeRadios();
       });
-    });
-
-    // Category pills
-    this.catFilter.addEventListener('click', e => {
-      const btn = e.target.closest('.cat-pill');
-      if (!btn) return;
-      document.querySelectorAll('.cat-pill').forEach(p => {
-        p.classList.remove('bg-indigo-600', 'text-white', 'active');
-        p.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
-      });
-      btn.classList.add('bg-indigo-600', 'text-white', 'active');
-      btn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
-      this.activeCategory = btn.dataset.cat;
-      this.renderGoals();
-    });
-
-    // Search
-    this.searchInput.addEventListener('input', e => {
-      this.searchQuery = e.target.value.toLowerCase().trim();
-      this.renderGoals();
     });
 
     // World modal
@@ -611,9 +587,7 @@ class AppController {
   // =========================================================================
   renderGoals() {
     const today = StreakEngine.formatDate();
-    let list = this.goals;
-    if (this.activeCategory !== 'all') list = list.filter(g => g.category === this.activeCategory);
-    if (this.searchQuery) list = list.filter(g => g.title.toLowerCase().includes(this.searchQuery));
+    const list = this.goals;
 
     if (!list.length) {
       this.goalsContainer.innerHTML = '';
