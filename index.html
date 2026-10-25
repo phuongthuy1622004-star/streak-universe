@@ -12,13 +12,8 @@
   <link rel="apple-touch-icon" href="icons/icon.svg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = { darkMode: 'class' }
-    // Apply theme IMMEDIATELY before any render to prevent flash
-    ;(function(){
-      var t = localStorage.getItem('streak_universe_theme') || 'light';
-      if (t === 'dark') document.documentElement.classList.add('dark');
-      else document.documentElement.classList.remove('dark');
-    })();
+    document.documentElement.classList.remove('dark');
+    try { localStorage.removeItem('streak_universe_theme'); } catch (e) {}
   </script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="style.css" />
@@ -33,15 +28,12 @@
         <div>
           <div class="flex items-center gap-1.5">
             <h1 class="text-sm font-black tracking-tight bg-gradient-to-r from-amber-600 via-rose-600 to-indigo-600 bg-clip-text text-transparent">STREAK UNIVERSE</h1>
-            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 leading-none">v3</span>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-indigo-600 leading-none">v4</span>
           </div>
           <p class="text-[10px] text-slate-400 font-medium">Habits & Gamified Worlds</p>
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button id="btnThemeToggle" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-sm transition">
-          <span id="themeToggleIcon">☀️</span>
-        </button>
         <button id="btnOpenCreateGoal" class="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-rose-600 text-white shadow-lg shadow-indigo-500/25 transition active:scale-95">
           + New Goal
         </button>
@@ -86,7 +78,7 @@
 
   <!-- FOOTER -->
   <footer class="py-4 text-center text-[10px] text-slate-400">
-    Streak Universe • <span class="font-semibold text-slate-500 dark:text-slate-400">v3</span>
+    Streak Universe • <span class="font-semibold text-slate-500">v4</span>
   </footer>
 
   <!-- ============================================================
@@ -280,6 +272,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

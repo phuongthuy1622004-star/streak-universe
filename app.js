@@ -1,10 +1,12 @@
-const APP_VERSION = '3';
+const APP_VERSION = '4';
 window.APP_VERSION = APP_VERSION;
- * - Multi-Goal System | English UI | Light theme default
- * - Idempotency + 1-Day Grace Period Streak Engine
+/**
+ * STREAK UNIVERSE - HABIT & WORLD TRACKER
+ * - Multi-Goal System | English UI | Pure Light Theme
+ * - Idempotency + 1-Day Grace Period Streak Engine + Reverse/Undo Check-in
  * - Self-Healing from Audit Log
- * - Offline-First localStorage + Firebase RTDB Anonymous Auth Sync
- * - 5 Themes: Garden, Zoo, Ocean, Candy, Custom
+ * - Firebase RTDB Direct Cloud Sync
+ * - 4 Themes: Garden, Zoo, Ocean, Candy
  * - Web Audio API SFX + Confetti
  */
 
@@ -359,8 +361,6 @@ class AppController {
   }
 
   initElements() {
-    this.btnThemeToggle  = document.getElementById('btnThemeToggle');
-    this.themeToggleIcon = document.getElementById('themeToggleIcon');
     this.btnOpenCreate   = document.getElementById('btnOpenCreateGoal');
 
     this.statActive    = document.getElementById('statActiveStreaks');
@@ -415,9 +415,6 @@ class AppController {
   }
 
   bindEvents() {
-    // Theme toggle
-    this.btnThemeToggle?.addEventListener('click', () => this.toggleTheme());
-
     // Goal CRUD
     this.btnOpenCreate.addEventListener('click', () => this.openGoalModal());
     this.btnCloseGoal.addEventListener('click',  () => this.closeGoalModal());
@@ -468,35 +465,15 @@ class AppController {
   }
 
   // =========================================================================
-  // THEME
-  // =========================================================================
-  applyTheme(t) {
-    if (t === 'dark') {
-      document.documentElement.classList.add('dark');
-      if (this.themeToggleIcon) this.themeToggleIcon.textContent = '🌙';
-    } else {
-      document.documentElement.classList.remove('dark');
-      if (this.themeToggleIcon) this.themeToggleIcon.textContent = '☀️';
-    }
-    localStorage.setItem('streak_universe_theme', t);
-  }
-
-  toggleTheme() {
-    this.applyTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
-  }
-
-  // =========================================================================
   // INIT
   // =========================================================================
   loadInitialData() {
-    // Clear legacy localStorage cache
+    // Clear legacy localStorage cache & dark theme setting
     try {
       localStorage.removeItem('streak_universe_goals');
+      localStorage.removeItem('streak_universe_theme');
     } catch (e) {}
-
-    // Apply theme immediately
-    const savedTheme = localStorage.getItem('streak_universe_theme') || 'light';
-    this.applyTheme(savedTheme);
+    document.documentElement.classList.remove('dark');
 
     // Show loading state
     this.goalsContainer.innerHTML = `
@@ -653,12 +630,29 @@ class AppController {
   }
 
   // =========================================================================
-  // CHECK-IN
+  // CHECK-IN & REVERSE (UNDO IF CLICKED AGAIN)
   // =========================================================================
   toggleCheckIn(id) {
     const goal = this.goals.find(g => g.id === id);
     if (!goal) return;
 
+    const todayStr = StreakEngine.formatDate();
+    const isCompletedToday = goal.streak?.last_completed_date === todayStr || (goal.streak_dates || []).includes(todayStr);
+
+    // REVERSE / UNDO TODAY'S COMPLETION
+    if (isCompletedToday) {
+      goal.streak_dates = (goal.streak_dates || []).filter(d => d !== todayStr);
+      goal.streak = StreakEngine.recalculateStreakFromDates(goal.streak_dates);
+
+      SoundFX.playPop();
+      this.renderStats();
+      this.renderGoals();
+      AppStorage.saveGoals(this.goals).catch(e => this.showToast('⚠️ Save failed: ' + e.message));
+      this.showToast('Check-in undone ↩️');
+      return;
+    }
+
+    // COMPLETE TODAY
     const res = StreakEngine.recordDailyCompletion(goal);
     if (res.isNewDay) {
       goal.streak.current_streak % 5 === 0 ? SoundFX.playMilestone() : SoundFX.playSuccess();
@@ -670,9 +664,6 @@ class AppController {
       AppStorage.saveGoals(this.goals).catch(e => this.showToast('⚠️ Save failed: ' + e.message));
 
       if (res.graceApplied) this.showToast('🛡️ Grace period! Streak protected.');
-    } else {
-      SoundFX.playPop();
-      this.showToast('Already checked-in today! ✨');
     }
   }
 
