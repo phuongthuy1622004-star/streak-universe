@@ -1,4 +1,4 @@
-const APP_VERSION = '9';
+const APP_VERSION = '10';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -194,7 +194,7 @@ class StreakEngine {
     return pool[Math.abs(h) % pool.length];
   }
 
-  /** Rule 1+2: idempotent check-in with frequency + 1-day grace */
+  /** Rule 1+2: idempotent check-in with frequency + 1-cycle grace */
   static recordDailyCompletion(goal, today = new Date()) {
     const todayStr = this.formatDate(today);
     if (goal.streak?.last_completed_date === todayStr) return { isNewDay: false, graceApplied: false };
@@ -208,7 +208,7 @@ class StreakEngine {
       const diff = this.diffDays(this.parseDate(last), today);
       if (diff <= freq) {
         next += 1;
-      } else if (diff === freq + 1) {
+      } else if (diff <= (2 * freq)) {
         next += 1;
         graceApplied = true;
       } else {
@@ -234,7 +234,7 @@ class StreakEngine {
     const last = this.parseDate(goal.streak.last_completed_date);
     if (!last) return;
     const freq = parseInt(goal.frequency, 10) || 1;
-    if (this.diffDays(last, today) > (freq + 1) && goal.streak.current_streak > 0)
+    if (this.diffDays(last, today) > (2 * freq) && goal.streak.current_streak > 0)
       goal.streak.current_streak = 0;
   }
 
@@ -242,33 +242,37 @@ class StreakEngine {
   static recalculateStreakFromDates(dates, frequency = 1, today = new Date()) {
     if (!dates?.length) return { current_streak: 0, longest_streak: 0, last_completed_date: '' };
     const sorted = [...new Set(dates)].sort();
+    const freq = parseInt(frequency, 10) || 1;
     let cur = 1, max = 1;
     for (let i = 1; i < sorted.length; i++) {
       const d = this.diffDays(this.parseDate(sorted[i-1]), this.parseDate(sorted[i]));
-      if (d <= frequency + 1) { cur++; } else { cur = 1; }
+      if (d <= (2 * freq)) { cur++; } else { cur = 1; }
       max = Math.max(max, cur);
     }
     const last = sorted[sorted.length - 1];
-    const active = this.diffDays(this.parseDate(last), today) > (frequency + 1) ? 0 : cur;
+    const active = this.diffDays(this.parseDate(last), today) > (2 * freq) ? 0 : cur;
     return { current_streak: active, longest_streak: max, last_completed_date: last };
   }
 
-  /** Section 6: Greedy tier decomposition → world grid items */
-  static generateWorldItems(dates, themeKey = 'garden') {
+  /** Section 6: Greedy tier decomposition → world grid items based on times (frequency) */
+  static generateWorldItems(dates, themeKey = 'garden', frequency = 1) {
     if (!dates?.length) return [];
     const sorted = [...new Set(dates)].sort();
     const cfg = THEME_CONFIGS[themeKey] ?? THEME_CONFIGS.garden;
     const items = [];
+    const freq = parseInt(frequency, 10) || 1;
     let runStart = 0;
 
     for (let i = 1; i <= sorted.length; i++) {
       const isLast = i === sorted.length;
       let gapDays = 0;
       if (!isLast) {
-        gapDays = this.diffDays(this.parseDate(sorted[i-1]), this.parseDate(sorted[i])) - 1;
+        gapDays = this.diffDays(this.parseDate(sorted[i-1]), this.parseDate(sorted[i]));
       }
 
-      if (gapDays > 0 || isLast) {
+      const isBreak = !isLast && gapDays > (2 * freq);
+
+      if (isBreak || isLast) {
         const run = sorted.slice(runStart, i);
         let remaining = run.length, idx = 0;
 
@@ -278,7 +282,14 @@ class StreakEngine {
             const d = run[Math.min(idx + tier - 1, run.length - 1)];
             const pool = cfg.tiers[tier];
             const emoji = pool ? this.hashEmoji(pool, d) : '🌱';
-            items.push({ type: 'healthy', tier, emoji, label: `${tier}d`, date: d, title: cfg.labels[tier] ?? `${tier} Days` });
+            items.push({
+              type: 'healthy',
+              tier,
+              emoji,
+              label: `${tier}x`,
+              date: d,
+              title: `${tier} ${tier === 1 ? 'time' : 'times'}`
+            });
             idx += tier;
           }
           remaining %= tier;
@@ -287,17 +298,34 @@ class StreakEngine {
           const d = run[idx + r];
           const pool = cfg.tiers[1];
           const emoji = pool ? this.hashEmoji(pool, d) : '🌱';
-          items.push({ type: 'healthy', tier: 1, emoji, label: '1d', date: d, title: cfg.labels[1] ?? '1 Day' });
+          items.push({
+            type: 'healthy',
+            tier: 1,
+            emoji,
+            label: '1x',
+            date: d,
+            title: '1 time'
+          });
         }
 
-        if (gapDays > 0) {
+        if (isBreak) {
+          const missedCycles = Math.max(1, Math.floor(gapDays / freq) - 1);
           let dt = 1;
-          if (gapDays >= 100) dt = 100;
-          else if (gapDays >= 15) dt = 15;
-          else if (gapDays >= 10) dt = 10;
-          else if (gapDays >= 5)  dt = 5;
+          if (missedCycles >= 100) dt = 100;
+          else if (missedCycles >= 15) dt = 15;
+          else if (missedCycles >= 10) dt = 10;
+          else if (missedCycles >= 5)  dt = 5;
+
           const dead = cfg.dead[dt] ?? { emoji: '🌾', name: 'Miss' };
-          items.push({ type: 'dead', tier: dt, emoji: dead.emoji, label: `${gapDays}m`, gapDays, title: `Missed ${gapDays} days`, dateDesc: `${run[run.length-1]} → ${sorted[i]}` });
+          items.push({
+            type: 'dead',
+            tier: dt,
+            emoji: dead.emoji,
+            label: `${missedCycles}m`,
+            gapDays,
+            title: `Missed ${missedCycles} ${missedCycles === 1 ? 'time' : 'times'} (${gapDays} days)`,
+            dateDesc: `${run[run.length-1]} → ${sorted[i]}`
+          });
           runStart = i;
         }
       }
@@ -406,6 +434,7 @@ class AppController {
     this.worldThemeSubtext = document.getElementById('worldThemeSubtext');
     this.worldCurrentStreak= document.getElementById('worldCurrentStreak');
     this.worldLongestStreak= document.getElementById('worldLongestStreak');
+    this.worldGraceText    = document.getElementById('worldGraceText');
     this.worldSlotsGrid    = document.getElementById('worldSlotsGrid');
     this.worldLegendContent= document.getElementById('worldLegendContent');
     this.slotDetailBox     = document.getElementById('slotDetailBox');
@@ -617,8 +646,8 @@ class AppController {
             <div class="flex items-center gap-2.5">
               <div class="w-10 h-10 rounded-xl bg-amber-100/90 border border-amber-300 flex items-center justify-center text-lg ${cur > 0 ? 'flame-glow' : 'opacity-60'}">🔥</div>
               <div>
-                <div class="text-base font-black text-amber-700 leading-tight">${cur} <span class="text-[11px] font-bold text-slate-500">days</span></div>
-                <div class="text-[10px] text-slate-500 font-medium">Best: <strong class="text-rose-600 font-bold">${lng}</strong></div>
+                <div class="text-base font-black text-amber-700 leading-tight">${cur} <span class="text-[11px] font-bold text-slate-500">${cur === 1 ? 'time' : 'times'}</span></div>
+                <div class="text-[10px] text-slate-500 font-medium">Best: <strong class="text-rose-600 font-bold">${lng} ${lng === 1 ? 'time' : 'times'}</strong></div>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -789,10 +818,14 @@ class AppController {
 
     const cur = goal.streak?.current_streak ?? 0;
     const lng = goal.streak?.longest_streak ?? 0;
-    this.worldCurrentStreak.textContent = `${cur} days`;
-    this.worldLongestStreak.textContent = `${lng} days`;
+    const freq = parseInt(goal.frequency, 10) || 1;
+    this.worldCurrentStreak.textContent = `${cur} ${cur === 1 ? 'time' : 'times'}`;
+    this.worldLongestStreak.textContent = `${lng} ${lng === 1 ? 'time' : 'times'}`;
+    if (this.worldGraceText) {
+      this.worldGraceText.textContent = freq === 1 ? '1-Day 🛡️' : `${freq}d Grace 🛡️`;
+    }
 
-    const items = StreakEngine.generateWorldItems(goal.streak_dates ?? [], goal.theme);
+    const items = StreakEngine.generateWorldItems(goal.streak_dates ?? [], goal.theme, freq);
     this.currentWorldItems = items;
     this.slotDetailBox.classList.add('hidden');
 
@@ -849,7 +882,7 @@ class AppController {
             <span class="text-[9px] text-slate-300 font-bold">/</span>
             <span class="select-none opacity-60">${dead.emoji}</span>
           </div>
-          <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${st.badge}">${t}d</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${st.badge}">${t} ${t === 1 ? 'time' : 'times'}</span>
         </div>`;
     }).join('');
   }
