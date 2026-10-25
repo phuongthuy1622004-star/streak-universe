@@ -324,7 +324,7 @@ class StreakEngine {
 //    If RTDB is unavailable → silent fail, localStorage stays authoritative
 // ==========================================================================
 class FirebaseSync {
-  static DB_URL = 'https://streakapp-6eab3-default-rtdb.firebaseio.com';
+  static DB_URL = 'https://streakapp-6eab3-default-rtdb.asia-southeast1.firebasedatabase.app';
 
   static _getDeviceId() {
     let id = localStorage.getItem('streak_universe_device_id');
