@@ -1,4 +1,4 @@
-const APP_VERSION = '1.2.2';
+const APP_VERSION = '3';
 window.APP_VERSION = APP_VERSION;
  * - Multi-Goal System | English UI | Light theme default
  * - Idempotency + 1-Day Grace Period Streak Engine
@@ -160,26 +160,6 @@ const THEME_CONFIGS = {
       100: { emoji: '📦', name: 'Moldy Box' }
     },
     labels: { 1: 'Lollipop', 5: 'Candy Bar', 10: 'Donut', 15: 'Cake', 100: 'Castle' }
-  },
-
-  custom: {
-    name: 'Custom World', subtext: 'Your personalized universe!',
-    icon: '⭐', themeClass: 'theme-custom',
-    tiers: {
-      1:   ['⭐'],
-      5:   ['🎯', '⚡', '💫'],
-      10:  ['🔥', '🚀', '🎖️'],
-      15:  ['🏆', '🥇', '✨'],
-      100: ['👑', '💎', '🌟']
-    },
-    dead: {
-      1:   { emoji: '🌾', name: 'Dry Straw' },
-      5:   { emoji: '🍂', name: 'Withered Leaf' },
-      10:  { emoji: '🪨', name: 'Cold Stone' },
-      15:  { emoji: '☠️', name: 'Skull' },
-      100: { emoji: '👻', name: 'Ghost' }
-    },
-    labels: { 1: 'Start', 5: 'Progress', 10: 'Star', 15: 'Champion', 100: 'Legend' }
   }
 };
 
@@ -263,7 +243,7 @@ class StreakEngine {
   }
 
   /** Section 6: Greedy tier decomposition → world grid items */
-  static generateWorldItems(dates, themeKey = 'garden', customEmoji = '') {
+  static generateWorldItems(dates, themeKey = 'garden') {
     if (!dates?.length) return [];
     const sorted = [...new Set(dates)].sort();
     const cfg = THEME_CONFIGS[themeKey] ?? THEME_CONFIGS.garden;
@@ -286,8 +266,7 @@ class StreakEngine {
           for (let c = 0; c < cnt; c++) {
             const d = run[Math.min(idx + tier - 1, run.length - 1)];
             const pool = cfg.tiers[tier];
-            let emoji = pool ? this.hashEmoji(pool, d) : '⭐';
-            if (themeKey === 'custom' && customEmoji && tier === 1) emoji = customEmoji;
+            const emoji = pool ? this.hashEmoji(pool, d) : '🌱';
             items.push({ type: 'healthy', tier, emoji, label: `${tier}d`, date: d, title: cfg.labels[tier] ?? `${tier} Days` });
             idx += tier;
           }
@@ -296,8 +275,7 @@ class StreakEngine {
         for (let r = 0; r < remaining; r++) {
           const d = run[idx + r];
           const pool = cfg.tiers[1];
-          let emoji = pool ? this.hashEmoji(pool, d) : '🌱';
-          if (themeKey === 'custom' && customEmoji) emoji = customEmoji;
+          const emoji = pool ? this.hashEmoji(pool, d) : '🌱';
           items.push({ type: 'healthy', tier: 1, emoji, label: '1d', date: d, title: cfg.labels[1] ?? '1 Day' });
         }
 
@@ -410,8 +388,6 @@ class AppController {
     this.formTargetStreak = document.getElementById('formTargetStreak');
     this.btnAutoDeadline  = document.getElementById('btnAutoDeadline');
     this.formDeadline     = document.getElementById('formDeadline');
-    this.formCustomEmoji  = document.getElementById('formCustomEmoji');
-    this.customEmojiBox   = document.getElementById('customEmojiBox');
 
     // World modal
     this.worldModal        = document.getElementById('worldModal');
@@ -468,10 +444,7 @@ class AppController {
 
     // Theme radio visual
     document.querySelectorAll('input[name="goalTheme"]').forEach(r => {
-      r.addEventListener('change', () => {
-        this.customEmojiBox.classList.toggle('hidden', r.value !== 'custom' || !document.querySelector('input[name="goalTheme"][value="custom"]').checked);
-        this._styleThemeRadios();
-      });
+      r.addEventListener('change', () => this._styleThemeRadios());
     });
 
     // World modal
@@ -608,7 +581,7 @@ class AppController {
     this.goalsContainer.innerHTML = list.map(goal => {
       const done = goal.streak?.last_completed_date === today;
       const cfg  = THEME_CONFIGS[goal.theme] ?? THEME_CONFIGS.garden;
-      const icon = (goal.theme === 'custom' && goal.custom_emoji) ? goal.custom_emoji : cfg.icon;
+      const icon = cfg.icon;
       const cur  = goal.streak?.current_streak  ?? 0;
       const lng  = goal.streak?.longest_streak  ?? 0;
       const cat  = CATS[goal.category] ?? CATS.other;
@@ -708,7 +681,6 @@ class AppController {
   // =========================================================================
   openGoalModal(editing = null) {
     this.goalForm.reset();
-    this.customEmojiBox.classList.add('hidden');
     this.customTargetBox.classList.add('hidden');
 
     if (editing) {
@@ -730,10 +702,6 @@ class AppController {
 
       const themeRadio = document.querySelector(`input[name="goalTheme"][value="${editing.theme || 'garden'}"]`);
       if (themeRadio) themeRadio.checked = true;
-      if (editing.theme === 'custom') {
-        this.customEmojiBox.classList.remove('hidden');
-        this.formCustomEmoji.value = editing.custom_emoji || '';
-      }
     } else {
       this.goalModalTitle.textContent = '🎯 New Goal';
       this.formGoalId.value = '';
@@ -764,14 +732,13 @@ class AppController {
     const deadline     = this.formDeadline.value;
     const target_streak= parseInt(this.formTargetStreak.value, 10) || 30;
     const theme        = document.querySelector('input[name="goalTheme"]:checked')?.value || 'garden';
-    const custom_emoji = this.formCustomEmoji.value.trim();
 
     const idx = this.goals.findIndex(g => g.id === id);
     if (idx >= 0) {
-      this.goals[idx] = { ...this.goals[idx], title, category, daily_target, deadline, target_streak, theme, custom_emoji };
+      this.goals[idx] = { ...this.goals[idx], title, category, daily_target, deadline, target_streak, theme };
       this.showToast('Goal updated ✅');
     } else {
-      this.goals.unshift({ id, title, category, daily_target, deadline, target_streak, theme, custom_emoji,
+      this.goals.unshift({ id, title, category, daily_target, deadline, target_streak, theme,
         created_at: StreakEngine.formatDate(),
         streak: { current_streak:0, longest_streak:0, last_completed_date:'' },
         streak_dates: [] });
@@ -812,7 +779,7 @@ class AppController {
     this.currentWorldGoalId = id;
 
     const cfg  = THEME_CONFIGS[goal.theme] ?? THEME_CONFIGS.garden;
-    const icon = (goal.theme === 'custom' && goal.custom_emoji) ? goal.custom_emoji : cfg.icon;
+    const icon = cfg.icon;
 
     this.worldHeaderBanner.className = `p-4 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between transition-colors duration-300 ${cfg.themeClass}`;
     this.worldThemeIcon.textContent    = icon;
@@ -824,7 +791,7 @@ class AppController {
     this.worldCurrentStreak.textContent = `${cur} days`;
     this.worldLongestStreak.textContent = `${lng} days`;
 
-    const items = StreakEngine.generateWorldItems(goal.streak_dates ?? [], goal.theme, goal.custom_emoji);
+    const items = StreakEngine.generateWorldItems(goal.streak_dates ?? [], goal.theme);
     this.currentWorldItems = items;
     this.slotDetailBox.classList.add('hidden');
 
@@ -842,7 +809,7 @@ class AppController {
         </div>`).join('');
     }
 
-    this._renderLegend(cfg, goal.custom_emoji);
+    this._renderLegend(cfg);
 
     this.worldModal.classList.remove('opacity-0', 'pointer-events-none');
     this.worldModalBox.classList.remove('translate-y-8');
@@ -860,11 +827,10 @@ class AppController {
       : `${item.dateDesc} — ${item.gapDays} days missed`;
   }
 
-  _renderLegend(cfg, customEmoji) {
+  _renderLegend(cfg) {
     this.worldLegendContent.innerHTML = [1, 5, 10, 15, 100].map(t => {
       const pool = cfg.tiers[t];
-      let live = pool?.[0] ?? '⭐';
-      if (customEmoji && t === 1) live = customEmoji;
+      const live = pool?.[0] ?? '🌱';
       const dead = cfg.dead[t] ?? { emoji: '🌾' };
       return `
         <div class="p-2 rounded-xl bg-white dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-center flex flex-col items-center">
