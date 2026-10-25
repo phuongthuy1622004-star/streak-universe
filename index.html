@@ -13,6 +13,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { darkMode: 'class' }
+    // Apply theme IMMEDIATELY before any render to prevent flash
+    ;(function(){
+      var t = localStorage.getItem('streak_universe_theme') || 'light';
+      if (t === 'dark') document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+    })();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <link rel="stylesheet" href="style.css" />
@@ -260,20 +266,8 @@
 
         <!-- Legend -->
         <div class="bg-slate-50 dark:bg-slate-900/60 rounded-2xl p-3 border border-slate-200 dark:border-slate-800">
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Tiers</p>
-            <button id="btnToggleAuditLog" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">Audit Log 📋</button>
-          </div>
+          <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-2">Tiers</p>
           <div id="worldLegendContent" class="grid grid-cols-5 gap-1.5 text-xs"></div>
-        </div>
-
-        <!-- Audit Log -->
-        <div id="auditLogDrawer" class="hidden bg-slate-50 dark:bg-slate-900 rounded-2xl p-3 border border-slate-200 dark:border-slate-800">
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-xs font-bold text-slate-700 dark:text-slate-200">Check-in History</p>
-            <span id="auditTotalCount" class="text-xs text-indigo-600 dark:text-indigo-400 font-bold">0 days</span>
-          </div>
-          <div id="auditDatesList" class="max-h-32 overflow-y-auto text-xs font-mono text-slate-600 dark:text-slate-300 space-y-0.5 p-2 bg-white dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-800"></div>
         </div>
       </div>
 
