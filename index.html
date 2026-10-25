@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="vi" class="dark">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Streak Universe - Habit & World Tracker</title>
-  <meta name="description" content="Hệ thống quản lý Streak đa mục tiêu kết hợp gamification Vườn Cây, Thảo Cầm Viên, Thủy Cung và Vũ Trụ!" />
+  <meta name="description" content="Multi-goal streak tracking system with customizable gamification worlds: Garden, Zoo, Aquarium, and Candy Land!" />
   <meta name="theme-color" content="#0f172a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -53,7 +53,7 @@
           <h1 class="text-base sm:text-lg font-black tracking-tight bg-gradient-to-r from-amber-400 via-rose-300 to-indigo-300 bg-clip-text text-transparent">
             STREAK UNIVERSE
           </h1>
-          <p class="text-[11px] text-slate-400 font-medium">Hệ thống Thói Quen & Vườn Kỳ Diệu</p>
+          <p class="text-[11px] text-slate-400 font-medium">Habits & Gamified Worlds</p>
         </div>
       </div>
 
@@ -69,7 +69,7 @@
         <!-- New Goal Button -->
         <button id="btnOpenCreateGoal" class="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-bold bg-gradient-to-r from-indigo-500 to-rose-500 hover:from-indigo-600 hover:to-rose-600 text-white shadow-lg shadow-indigo-500/30 transition transform active:scale-95">
           <span>+</span>
-          <span class="hidden xs:inline">Thêm Mục Tiêu</span>
+          <span class="hidden xs:inline">New Goal</span>
         </button>
       </div>
     </div>
@@ -85,7 +85,7 @@
         <span class="text-2xl sm:text-3xl font-extrabold text-amber-400 flex items-center gap-1">
           <span id="statActiveStreaks">0</span> 🔥
         </span>
-        <span class="text-xs text-slate-400 font-medium mt-1">Mục Tiêu Đang Giữ</span>
+        <span class="text-xs text-slate-400 font-medium mt-1">Active Streaks</span>
       </div>
 
       <!-- Stat 2: Longest Streak -->
@@ -93,7 +93,7 @@
         <span class="text-2xl sm:text-3xl font-extrabold text-rose-400 flex items-center gap-1">
           <span id="statBestStreak">0</span> 🏆
         </span>
-        <span class="text-xs text-slate-400 font-medium mt-1">Kỷ Lục Dài Nhất</span>
+        <span class="text-xs text-slate-400 font-medium mt-1">Best Record</span>
       </div>
 
       <!-- Stat 3: Total Completions -->
@@ -101,7 +101,7 @@
         <span class="text-2xl sm:text-3xl font-extrabold text-indigo-400 flex items-center gap-1">
           <span id="statTotalDays">0</span> 📅
         </span>
-        <span class="text-xs text-slate-400 font-medium mt-1">Tổng Ngày Tích Lũy</span>
+        <span class="text-xs text-slate-400 font-medium mt-1">Total Days Logged</span>
       </div>
 
       <!-- Stat 4: Today Progress -->
@@ -109,7 +109,7 @@
         <span class="text-2xl sm:text-3xl font-extrabold text-emerald-400 flex items-center gap-1">
           <span id="statTodayRate">0%</span> ✨
         </span>
-        <span class="text-xs text-slate-400 font-medium mt-1">Hoàn Thành Hôm Nay</span>
+        <span class="text-xs text-slate-400 font-medium mt-1">Today's Completion</span>
       </div>
     </section>
 
@@ -121,7 +121,7 @@
         <input
           type="text"
           id="searchInput"
-          placeholder="Tìm mục tiêu, thói quen hoặc ghi chú..."
+          placeholder="Search goals, habits or notes..."
           class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
         />
       </div>
@@ -129,22 +129,22 @@
       <!-- Category Filter Pills -->
       <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 text-xs font-semibold scrollbar-none" id="categoryFilterContainer">
         <button data-cat="all" class="cat-pill active px-3 py-1.5 rounded-lg bg-indigo-600 text-white whitespace-nowrap shadow-sm">
-          Tất Cả
+          All
         </button>
         <button data-cat="study" class="cat-pill px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap">
-          📚 Học Tập
+          📚 Study
         </button>
         <button data-cat="health" class="cat-pill px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap">
-          🏃 Sức Khỏe
+          🏃 Health
         </button>
         <button data-cat="work" class="cat-pill px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap">
-          💼 Công Việc
+          💼 Work
         </button>
         <button data-cat="mind" class="cat-pill px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap">
-          🧘 Tinh Thần
+          🧘 Wellness
         </button>
         <button data-cat="other" class="cat-pill px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap">
-          ✨ Khác
+          ✨ Other
         </button>
       </div>
     </section>
@@ -158,12 +158,12 @@
       <!-- Empty State -->
       <div id="emptyState" class="hidden glass-card rounded-2xl p-8 sm:p-12 text-center max-w-md mx-auto my-6">
         <div class="text-6xl mb-4">🌱</div>
-        <h3 class="text-lg font-bold text-slate-200">Chưa có mục tiêu Streak nào</h3>
+        <h3 class="text-lg font-bold text-slate-200">No Streak Goals Yet</h3>
         <p class="text-xs sm:text-sm text-slate-400 mt-2 mb-6 leading-relaxed">
-          Hãy tạo mục tiêu đầu tiên để bắt đầu nuôi dưỡng Vườn Cây, Thảo Cầm Viên hoặc Thế Giới kỳ diệu của riêng bạn!
+          Create your first goal to start growing your Magic Garden, Safari Zoo, Aquarium or Candy Kingdom!
         </p>
         <button onclick="document.getElementById('btnOpenCreateGoal').click()" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition">
-          + Bắt Đầu Ngay
+          + Get Started Now
         </button>
       </div>
     </section>
@@ -177,7 +177,7 @@
       <!-- Modal Header -->
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
         <h3 id="goalModalTitle" class="text-base sm:text-lg font-black text-slate-100 flex items-center gap-2">
-          🎯 Thiết Lập Mục Tiêu Mới
+          🎯 Set Up New Goal
         </h3>
         <button id="btnCloseGoalModal" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
           ✕
@@ -191,13 +191,13 @@
         <!-- 1. Goal Title -->
         <div>
           <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-            Tên Mục Tiêu / Thói Quen <span class="text-rose-400">*</span>
+            Goal / Habit Title <span class="text-rose-400">*</span>
           </label>
           <input
             type="text"
             id="formGoalTitle"
             required
-            placeholder="Ví dụ: Học tiếng Đức C1, Chạy bộ mỗi sáng, Đọc sách..."
+            placeholder="e.g., German C1 Practice, Morning 3km Run, Read 20 pages..."
             class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
@@ -205,98 +205,92 @@
         <!-- 2. Content / Habit Details & Motivation -->
         <div>
           <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-            Nội Dung Cần Duy Trì (Habit Content & Động Lực)
+            Habit Content & Motivation (Why do you want to keep this streak?)
           </label>
           <textarea
             id="formGoalContent"
             rows="2"
-            placeholder="Mô tả cụ thể thói quen muốn duy trì và lý do tại sao bạn không muốn bỏ cuộc..."
+            placeholder="Describe your habit and why you are committed to not giving up..."
             class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           ></textarea>
         </div>
 
-        <!-- 3. Category & Daily Target -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              Danh Mục
+        <!-- 3. Category -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+            Category
+          </label>
+          <select
+            id="formGoalCategory"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="study">📚 Study & Languages</option>
+            <option value="health">🏃 Health & Fitness</option>
+            <option value="work">💼 Work & Projects</option>
+            <option value="mind">🧘 Mindfulness & Meditation</option>
+            <option value="finance">💰 Personal Finance</option>
+            <option value="other">✨ Lifestyle & Other</option>
+          </select>
+        </div>
+
+        <!-- 4. DAILY TARGET MODE (Just tick vs Numeric quantity) -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>🎯</span> Daily Target Mode
             </label>
-            <select
-              id="formGoalCategory"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="study">📚 Học Tập & Ngoại Ngữ</option>
-              <option value="health">🏃 Sức Khỏe & Thể Thao</option>
-              <option value="work">💼 Công Việc & Dự Án</option>
-              <option value="mind">🧘 Tinh Thần & Thiền Định</option>
-              <option value="finance">💰 Tài Chính Cá Nhân</option>
-              <option value="other">✨ Đời Sống Khác</option>
-            </select>
+            <span class="text-[11px] text-slate-400">Choose completion style</span>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              Định Lượng Mỗi Ngày (Daily Target)
+          <!-- Radio Selection: Simple Tick vs Custom Target -->
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-700 bg-slate-950 cursor-pointer hover:border-indigo-500 transition">
+              <input type="radio" name="targetMode" value="tick" checked class="text-indigo-600 focus:ring-indigo-500" />
+              <div>
+                <strong class="block text-slate-200">Just Tick (✓)</strong>
+                <span class="text-[10px] text-slate-400">1-click check-in</span>
+              </div>
             </label>
+
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-700 bg-slate-950 cursor-pointer hover:border-indigo-500 transition">
+              <input type="radio" name="targetMode" value="custom" class="text-indigo-600 focus:ring-indigo-500" />
+              <div>
+                <strong class="block text-slate-200">Specific Amount</strong>
+                <span class="text-[10px] text-slate-400">e.g. 30 mins, 5 km</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Custom Quantity Input (Hidden if 'tick' mode) -->
+          <div id="customTargetInputContainer" class="hidden pt-1">
             <input
               type="text"
               id="formDailyTarget"
-              placeholder="Ví dụ: 30 phút, 10 trang sách, 5km..."
-              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="e.g., 30 mins, 10 pages, 5 km, 1 chapter..."
+              class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-xs focus:ring-2 focus:ring-indigo-500"
             />
           </div>
         </div>
 
-        <!-- 4. Cadence & Deadline -->
+        <!-- 5. Cadence & Reminder -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              Giai Đoạn Streak (Chu kỳ)
+              Streak Cadence
             </label>
             <select
               id="formCadence"
               class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              <option value="daily">Hàng Ngày (1 ngày / lần - Grace 1 ngày)</option>
-              <option value="weekdays">Các ngày trong tuần (T2 - T6)</option>
-              <option value="custom">Tự do linh hoạt</option>
+              <option value="daily">Daily (1 day - with 1-Day Grace Period)</option>
+              <option value="weekdays">Weekdays (Mon - Fri)</option>
+              <option value="custom">Flexible</option>
             </select>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              Deadline Hoàn Thành (Tuỳ chọn)
-            </label>
-            <input
-              type="date"
-              id="formDeadline"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-        </div>
-
-        <!-- 5. Milestone Target & Reminder -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              Mục Tiêu Chuỗi (Milestone)
-            </label>
-            <select
-              id="formTargetStreak"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="7">7 Ngày (Khởi động)</option>
-              <option value="21">21 Ngày (Hình thành thói quen)</option>
-              <option value="30" selected>30 Ngày (Kiên trì 1 tháng)</option>
-              <option value="60">60 Ngày (Đẳng cấp)</option>
-              <option value="100">100 Ngày (Bậc thầy - Trái tim vàng)</option>
-              <option value="365">365 Ngày (Huyền thoại 1 năm)</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-              Giờ Nhắc Nhở Hàng Ngày
+              Daily Reminder Time
             </label>
             <input
               type="time"
@@ -307,76 +301,96 @@
           </div>
         </div>
 
-        <!-- 6. THEME SELECTION (Vườn cây, Thảo cầm viên, Thủy cung...) -->
-        <div class="pt-2">
-          <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-            <span>🎨</span> Chọn Theme Thế Giới / Biểu Tượng Của Riêng Mục Tiêu Này
-          </label>
-          <p class="text-[11px] text-slate-400 mb-2">Mỗi khi hoàn thành bài học, biểu tượng sẽ lớn dần và tích lũy vào Thế Giới này:</p>
+        <!-- 6. MILESTONE TARGET & TARGET DEADLINE DATE (Linked) -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>🏆</span> Milestone Target & Deadline Date
+            </label>
+            <button
+              type="button"
+              id="btnAutoCalculateDeadline"
+              class="text-[11px] font-bold text-indigo-300 hover:text-white bg-indigo-950/80 hover:bg-indigo-900 px-2.5 py-1 rounded-lg border border-indigo-700/60 transition"
+              title="Automatically calculate deadline date based on milestone days"
+            >
+              ⚡ Auto-Set Deadline
+            </button>
+          </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="themeRadioGroup">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <span class="block text-[11px] font-semibold text-slate-400 mb-1">Milestone Days Goal</span>
+              <select
+                id="formTargetStreak"
+                class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 text-xs focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="7">7 Days (Starter Sprint)</option>
+                <option value="21">21 Days (Habit Formation)</option>
+                <option value="30" selected>30 Days (1 Month Warrior)</option>
+                <option value="60">60 Days (Elite Discipline)</option>
+                <option value="100">100 Days (Master - Golden Heart)</option>
+                <option value="365">365 Days (1 Year Legend)</option>
+              </select>
+            </div>
+
+            <div>
+              <span class="block text-[11px] font-semibold text-slate-400 mb-1">Target Deadline Date</span>
+              <input
+                type="date"
+                id="formDeadline"
+                class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 text-xs focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+          <span class="text-[10px] text-slate-400 block">Pick any custom deadline date or click <strong>"⚡ Auto-Set Deadline"</strong> to calculate it from your milestone!</span>
+        </div>
+
+        <!-- 7. THEME SELECTION (Garden, Zoo, Aquarium, Candy, Custom) -->
+        <div class="pt-1">
+          <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <span>🎨</span> Choose Gamification Theme for this Goal
+          </label>
+          <p class="text-[11px] text-slate-400 mb-2">Each goal grows its own distinct world as you build streaks:</p>
+
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="themeRadioGroup">
             <!-- Garden -->
             <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-emerald-500 cursor-pointer transition">
               <input type="radio" name="goalTheme" value="garden" class="hidden" checked />
               <span class="text-2xl mb-1">🌱</span>
-              <span class="text-xs font-bold text-slate-200">Khu Vườn</span>
-              <span class="text-[10px] text-emerald-400">Cây & Hoa Quả</span>
+              <span class="text-xs font-bold text-slate-200">Magic Garden</span>
+              <span class="text-[10px] text-emerald-400">Plants & Fruits</span>
             </label>
 
             <!-- Zoo -->
             <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-amber-500 cursor-pointer transition">
               <input type="radio" name="goalTheme" value="zoo" class="hidden" />
               <span class="text-2xl mb-1">🦁</span>
-              <span class="text-xs font-bold text-slate-200">Thảo Cầm Viên</span>
-              <span class="text-[10px] text-amber-400">Muông Thú & Rồng</span>
+              <span class="text-xs font-bold text-slate-200">Safari Zoo</span>
+              <span class="text-[10px] text-amber-400">Wild Animals</span>
             </label>
 
             <!-- Aquarium -->
             <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-cyan-500 cursor-pointer transition">
               <input type="radio" name="goalTheme" value="aquarium" class="hidden" />
               <span class="text-2xl mb-1">🐬</span>
-              <span class="text-xs font-bold text-slate-200">Thủy Cung</span>
-              <span class="text-[10px] text-cyan-400">Đại Dương & Cá</span>
-            </label>
-
-            <!-- Galaxy -->
-            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-purple-500 cursor-pointer transition">
-              <input type="radio" name="goalTheme" value="galaxy" class="hidden" />
-              <span class="text-2xl mb-1">🌌</span>
-              <span class="text-xs font-bold text-slate-200">Vũ Trụ</span>
-              <span class="text-[10px] text-purple-400">Hành Tinh & Sao</span>
-            </label>
-
-            <!-- RPG -->
-            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-rose-500 cursor-pointer transition">
-              <input type="radio" name="goalTheme" value="rpg" class="hidden" />
-              <span class="text-2xl mb-1">⚔️</span>
-              <span class="text-xs font-bold text-slate-200">Hiệp Sĩ RPG</span>
-              <span class="text-[10px] text-rose-400">Kiếm & Vương Miện</span>
-            </label>
-
-            <!-- Cyberpunk -->
-            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-fuchsia-500 cursor-pointer transition">
-              <input type="radio" name="goalTheme" value="cyberpunk" class="hidden" />
-              <span class="text-2xl mb-1">🤖</span>
-              <span class="text-xs font-bold text-slate-200">Cyber City</span>
-              <span class="text-[10px] text-fuchsia-400">AI & Neon</span>
+              <span class="text-xs font-bold text-slate-200">Aquarium</span>
+              <span class="text-[10px] text-cyan-400">Ocean Creatures</span>
             </label>
 
             <!-- Candy -->
             <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-pink-500 cursor-pointer transition">
               <input type="radio" name="goalTheme" value="candy" class="hidden" />
               <span class="text-2xl mb-1">🍭</span>
-              <span class="text-xs font-bold text-slate-200">Kẹo Ngọt</span>
-              <span class="text-[10px] text-pink-400">Bánh & Socola</span>
+              <span class="text-xs font-bold text-slate-200">Candy Land</span>
+              <span class="text-[10px] text-pink-400">Sweets & Cakes</span>
             </label>
 
             <!-- Custom Emoji -->
             <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-indigo-500 cursor-pointer transition">
               <input type="radio" name="goalTheme" value="custom" class="hidden" />
               <span class="text-2xl mb-1">⭐</span>
-              <span class="text-xs font-bold text-slate-200">Tùy Chọn</span>
-              <span class="text-[10px] text-indigo-400">Icon Tự Gõ</span>
+              <span class="text-xs font-bold text-slate-200">Custom</span>
+              <span class="text-[10px] text-indigo-400">Your Own Icon</span>
             </label>
           </div>
 
@@ -385,7 +399,7 @@
             <input
               type="text"
               id="formCustomEmoji"
-              placeholder="Nhập 1 emoji đại diện (ví dụ: 🚀, 💻, 🥋, ☕...)"
+              placeholder="Enter 1 emoji (e.g. 🚀, 💻, 🥋, ☕, 🎨...)"
               maxlength="4"
               class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-indigo-500/60 text-slate-100 text-center text-lg"
             />
@@ -395,10 +409,10 @@
         <!-- Submit Button -->
         <div class="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
           <button type="button" id="btnCancelGoalModal" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition">
-            Hủy
+            Cancel
           </button>
           <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-rose-500 hover:from-indigo-600 hover:to-rose-600 text-white font-bold shadow-lg shadow-indigo-500/25 transition">
-            Lưu Mục Tiêu
+            Save Goal
           </button>
         </div>
       </form>
@@ -406,7 +420,7 @@
   </div>
 
   <!-- ======================================================================
-       MODAL 2: STREAK GARDEN / WORLD MODAL
+       MODAL 2: STREAK WORLD MODAL
        ====================================================================== -->
   <div id="worldModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
     <div class="glass-modal w-full sm:max-w-3xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-700 transform translate-y-8 transition-transform duration-200" id="worldModalBox">
@@ -417,10 +431,10 @@
             <span id="worldThemeIcon" class="text-3xl animate-bounce">🌱</span>
             <div>
               <h3 id="worldGoalTitle" class="text-lg sm:text-xl font-black text-white">
-                Khu Vườn Của Bạn
+                Your World
               </h3>
               <p id="worldThemeSubtext" class="text-xs text-emerald-300 font-medium">
-                Vườn Cây Sinh Trưởng Kỳ Diệu
+                Living Gamified Ecosystem
               </p>
             </div>
           </div>
@@ -434,18 +448,18 @@
       <!-- World Stats Strip -->
       <div class="bg-slate-900/90 px-5 py-3 border-b border-slate-800 flex items-center justify-around text-center text-xs">
         <div>
-          <span class="text-slate-400 block text-[10px] uppercase font-bold">Chuỗi Hiện Tại</span>
-          <span id="worldCurrentStreak" class="text-amber-400 font-black text-base sm:text-lg">0 ngày</span>
+          <span class="text-slate-400 block text-[10px] uppercase font-bold">Current Streak</span>
+          <span id="worldCurrentStreak" class="text-amber-400 font-black text-base sm:text-lg">0 days</span>
         </div>
         <div class="h-6 w-px bg-slate-800"></div>
         <div>
-          <span class="text-slate-400 block text-[10px] uppercase font-bold">Kỷ Lục Cao Nhất</span>
-          <span id="worldLongestStreak" class="text-rose-400 font-black text-base sm:text-lg">0 ngày</span>
+          <span class="text-slate-400 block text-[10px] uppercase font-bold">Best Record</span>
+          <span id="worldLongestStreak" class="text-rose-400 font-black text-base sm:text-lg">0 days</span>
         </div>
         <div class="h-6 w-px bg-slate-800"></div>
         <div>
           <span class="text-slate-400 block text-[10px] uppercase font-bold">Grace Period</span>
-          <span id="worldGraceStatus" class="text-emerald-400 font-bold text-xs sm:text-sm">Bảo vệ 1 ngày 🛡️</span>
+          <span id="worldGraceStatus" class="text-emerald-400 font-bold text-xs sm:text-sm">1-Day Shield Active 🛡️</span>
         </div>
       </div>
 
@@ -461,21 +475,21 @@
           <div class="flex items-center gap-3">
             <span id="slotDetailEmoji" class="text-3xl">🌱</span>
             <div>
-              <h4 id="slotDetailTitle" class="font-bold text-slate-200">Mầm Xanh (1 ngày)</h4>
-              <p id="slotDetailDesc" class="text-slate-400 text-[11px]">Hoàn thành ngày 2026-10-25</p>
+              <h4 id="slotDetailTitle" class="font-bold text-slate-200">Sprout (1 Day)</h4>
+              <p id="slotDetailDesc" class="text-slate-400 text-[11px]">Completed on 2026-10-25</p>
             </div>
           </div>
           <button onclick="document.getElementById('slotDetailBox').classList.add('hidden')" class="text-slate-400 hover:text-white text-xs">
-            Đóng
+            Close
           </button>
         </div>
 
-        <!-- Legend / Chú thích phân tầng milestone -->
+        <!-- Legend -->
         <div class="bg-slate-900/60 rounded-2xl p-4 border border-slate-800/80">
           <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
-            <span>📖 Bảng Chú Thích Cấp Bậc (Milestone Tiers)</span>
+            <span>📖 Milestone Tiers Legend</span>
             <button id="btnToggleAuditLog" class="text-indigo-400 hover:text-indigo-300 text-[11px] font-semibold underline">
-              Xem Lịch Sử Ngày 📋
+              View Audit Log 📋
             </button>
           </h4>
           <div id="worldLegendContent" class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
@@ -486,8 +500,8 @@
         <!-- Audit Log View (Collapsible) -->
         <div id="auditLogDrawer" class="hidden bg-slate-900 rounded-2xl p-4 border border-slate-800 space-y-2">
           <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-slate-200">Lịch Sử Ngày Đã Check-in (Audit Log)</h4>
-            <span id="auditTotalCount" class="text-xs text-indigo-400 font-bold">0 ngày</span>
+            <h4 class="text-xs font-bold text-slate-200">Recorded Check-in Dates (Audit Trail)</h4>
+            <span id="auditTotalCount" class="text-xs text-indigo-400 font-bold">0 days</span>
           </div>
           <div id="auditDatesList" class="max-h-36 overflow-y-auto text-xs font-mono text-slate-300 space-y-1 p-2 bg-slate-950 rounded-xl">
             <!-- Dates listed here -->
@@ -499,11 +513,11 @@
       <div class="px-5 py-3.5 bg-slate-900/90 border-t border-slate-800 flex items-center justify-between text-xs">
         <button id="btnSelfHealStreak" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-1.5 transition">
           <span>🩺</span>
-          <span>Tự Phục Hồi Streak (Self-Heal)</span>
+          <span>Self-Heal Streak (Audit Log Scan)</span>
         </button>
 
         <button id="btnWorldDone" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition">
-          Xong
+          Done
         </button>
       </div>
     </div>
@@ -516,7 +530,7 @@
     <div class="glass-modal w-full sm:max-w-lg max-h-[92vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-700 transform translate-y-8 transition-transform duration-200" id="firebaseModalBox">
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
         <h3 class="text-base sm:text-lg font-black text-slate-100 flex items-center gap-2">
-          ☁️ Đồng Bộ Firebase & Đa Thiết Bị
+          ☁️ Firebase Cloud Sync & Multi-Device
         </h3>
         <button id="btnCloseFirebaseModal" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
           ✕
@@ -525,7 +539,7 @@
 
       <div class="p-6 space-y-4 overflow-y-auto flex-1 text-sm">
         <div class="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-700/50 text-xs leading-relaxed text-indigo-200">
-          💡 <strong>Chiến lược Offline-First & Union Merge:</strong> Ứng dụng luôn lưu dữ liệu vào điện thoại trước. Khi có mạng, hệ thống tự động gộp (Union) lịch sử học giữa các thiết bị mà không bao giờ bị ghi đè mất ngày cũ!
+          💡 <strong>Offline-First & Union Merge:</strong> Streaks are always saved locally on your phone first. When online, your activity merges automatically without ever overwriting or losing past days!
         </div>
 
         <div>
@@ -550,12 +564,12 @@
             value="https://streakapp-6eab3-default-rtdb.firebaseio.com"
             class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-indigo-500"
           />
-          <span class="text-[11px] text-slate-400 mt-1 block">Link cấu hình từ Firebase Console của bạn.</span>
+          <span class="text-[11px] text-slate-400 mt-1 block">Configured from your Firebase Console.</span>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-            Mã Người Dùng / Thiết Bị (User Sync Key)
+            User / Device Sync Key
           </label>
           <div class="flex gap-2">
             <input
@@ -564,37 +578,37 @@
               class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-indigo-500"
             />
             <button id="btnGenerateNewSyncId" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 whitespace-nowrap">
-              Tạo mới
+              Generate
             </button>
           </div>
-          <span class="text-[11px] text-slate-400 mt-1 block">Nhập cùng mã này trên điện thoại và máy tính để đồng bộ chung 1 tài khoản.</span>
+          <span class="text-[11px] text-slate-400 mt-1 block">Use the same sync key on your phone and laptop to share data.</span>
         </div>
 
         <!-- Connection Test Status -->
         <div id="firebaseTestResult" class="text-xs p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 flex items-center justify-between">
-          <span>Trạng thái kết nối:</span>
-          <span id="firebaseStatusBadge" class="font-bold text-amber-400">Chưa kiểm tra</span>
+          <span>Connection Status:</span>
+          <span id="firebaseStatusBadge" class="font-bold text-amber-400">Not Tested</span>
         </div>
 
         <!-- Manual Actions -->
         <div class="pt-2 flex flex-col sm:flex-row gap-2">
           <button id="btnTestFirebaseConn" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition">
-            🔌 Kiểm Tra Kết Nối
+            🔌 Test Connection
           </button>
           <button id="btnForceSyncCloud" class="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-lg shadow-emerald-600/30">
-            🔄 Đồng Bộ Ngay (Union Merge)
+            🔄 Sync Now (Union Merge)
           </button>
         </div>
 
         <!-- Backup & Restore -->
         <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
-          <span class="text-xs text-slate-400 font-semibold">Sao Lưu Thủ Công:</span>
+          <span class="text-xs text-slate-400 font-semibold">Manual Backup:</span>
           <div class="flex gap-2">
             <button id="btnExportJson" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300">
-              Xuất File JSON 💾
+              Export JSON 💾
             </button>
             <label class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 cursor-pointer">
-              Nhập JSON 📥
+              Import JSON 📥
               <input type="file" id="importJsonInput" accept=".json" class="hidden" />
             </label>
           </div>
@@ -603,23 +617,23 @@
 
       <div class="px-6 py-3.5 bg-slate-900 border-t border-slate-800 flex justify-end">
         <button id="btnSaveFirebaseConfig" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition">
-          Lưu Cài Đặt
+          Save Settings
         </button>
       </div>
     </div>
   </div>
 
-  <!-- FLOATING BOTTOM PWA INSTALL PROMPT (Optional on mobile) -->
+  <!-- FLOATING BOTTOM PWA INSTALL PROMPT -->
   <div id="pwaInstallBanner" class="hidden fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40 glass-card p-3 rounded-2xl border border-indigo-500/50 flex items-center justify-between shadow-2xl">
     <div class="flex items-center gap-2.5">
       <span class="text-2xl">📲</span>
       <div>
-        <p class="text-xs font-bold text-white">Cài đặt ứng dụng lên Màn hình chính</p>
-        <p class="text-[10px] text-slate-300">Dùng mượt mà trên điện thoại ngay cả khi offline!</p>
+        <p class="text-xs font-bold text-white">Add App to Home Screen</p>
+        <p class="text-[10px] text-slate-300">Enjoy offline access and full-screen mobile app experience!</p>
       </div>
     </div>
     <div class="flex items-center gap-1.5">
-      <button id="btnPwaInstall" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold">Cài Đặt</button>
+      <button id="btnPwaInstall" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold">Install</button>
       <button id="btnPwaDismiss" class="text-slate-400 hover:text-white px-2 py-1 text-xs">✕</button>
     </div>
   </div>

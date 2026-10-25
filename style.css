@@ -172,49 +172,37 @@ body {
 }
 
 /* ==========================================================================
-   THEME PALETTES FOR WORLDS
+   THEME PALETTES (Garden, Zoo, Aquarium, Candy, Custom)
    ========================================================================== */
 
 /* 1. Theme Garden */
 .theme-garden {
-  background: radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.25), transparent 75%), #092615;
+  background: radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.3), transparent 75%), #092615;
   border-color: rgba(34, 197, 94, 0.35);
 }
 
 /* 2. Theme Zoo */
 .theme-zoo {
-  background: radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.3), transparent 75%), #231709;
+  background: radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.35), transparent 75%), #231709;
   border-color: rgba(245, 158, 11, 0.4);
 }
 
 /* 3. Theme Aquarium */
 .theme-aquarium {
-  background: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.3), transparent 75%), #051c2c;
+  background: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.35), transparent 75%), #051c2c;
   border-color: rgba(6, 182, 212, 0.4);
 }
 
-/* 4. Theme Galaxy */
-.theme-galaxy {
-  background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.35), transparent 75%), #110726;
-  border-color: rgba(168, 85, 247, 0.4);
-}
-
-/* 5. Theme RPG */
-.theme-rpg {
-  background: radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.3), transparent 75%), #230c0c;
-  border-color: rgba(239, 68, 68, 0.4);
-}
-
-/* 6. Theme Cyberpunk */
-.theme-cyberpunk {
-  background: radial-gradient(circle at 50% 0%, rgba(236, 72, 153, 0.35), transparent 75%), #170724;
-  border-color: rgba(6, 182, 212, 0.5);
-}
-
-/* 7. Theme Candy */
+/* 4. Theme Candy */
 .theme-candy {
   background: radial-gradient(circle at 50% 0%, rgba(244, 114, 182, 0.35), transparent 75%), #281023;
   border-color: rgba(244, 114, 182, 0.4);
+}
+
+/* 5. Theme Custom */
+.theme-custom {
+  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.35), transparent 75%), #110d29;
+  border-color: rgba(99, 102, 241, 0.4);
 }
 
 /* Custom Scrollbars */

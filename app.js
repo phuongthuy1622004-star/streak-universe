@@ -2,11 +2,13 @@
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
  * Architecture based on Deutsch C1 Technical Specification
  * Features:
- * - Multi-Goal / Multi-Habit System
+ * - Multi-Goal / Multi-Habit System (English UI)
+ * - Daily Target Modes: "Just Tick (✓)" vs "Specific Quantity"
+ * - Linked Milestone Target & Target Deadline Date with Auto-Calculation
  * - Idempotency & 1-Day Automatic Grace Period
  * - Self-Healing Engine from Audit Log (streak_dates)
  * - Offline-First with Union Merge Firebase RTDB Sync
- * - 7 Gamification Themes (Garden, Zoo, Aquarium, Galaxy, RPG, Cyberpunk, Candy)
+ * - 4 Handpicked Themes (Garden, Zoo, Aquarium, Candy) + Custom Emoji
  * - Web Audio API Sound FX & Confetti
  */
 
@@ -95,13 +97,13 @@ class SoundFX {
 }
 
 // ==========================================================================
-// 2. THEMES CONFIGURATION & EMOJI POOLS
+// 2. THEMES CONFIGURATION (Garden, Zoo, Aquarium, Candy, Custom)
 // ==========================================================================
 const THEME_CONFIGS = {
   garden: {
     id: 'garden',
-    name: 'Khu Vườn Kỳ Diệu',
-    subtext: 'Cây cối, hoa thơm & quả chín',
+    name: 'Magic Garden',
+    subtext: 'Lush plants, blooming flowers & sweet fruits',
     icon: '🌱',
     themeClass: 'theme-garden',
     tiers: {
@@ -112,25 +114,25 @@ const THEME_CONFIGS = {
       1:   ['🌱']
     },
     dead: {
-      100: { emoji: '👻', name: 'Hồn ma' },
-      15:  { emoji: '☠️', name: 'Đầu lâu' },
-      10:  { emoji: '🪵', name: 'Khúc gỗ' },
-      5:   { emoji: '🍂', name: 'Lá rụng' },
-      1:   { emoji: '🌾', name: 'Rơm khô' }
+      100: { emoji: '👻', name: 'Ghost' },
+      15:  { emoji: '☠️', name: 'Skull' },
+      10:  { emoji: '🪵', name: 'Dry Log' },
+      5:   { emoji: '🍂', name: 'Fallen Leaves' },
+      1:   { emoji: '🌾', name: 'Dry Straw' }
     },
     labels: {
-      100: 'Trái Tim Tình Yêu (100d)',
-      15:  'Quả Chín Mọng (15d)',
-      10:  'Hoa Nở Khoe Sắc (10d)',
-      5:   'Cây Đại Thụ (5d)',
-      1:   'Mầm Xanh (1d)'
+      100: 'Diamond Heart (100d)',
+      15:  'Juicy Fruit (15d)',
+      10:  'Blooming Flower (10d)',
+      5:   'Majestic Tree (5d)',
+      1:   'Sprout (1d)'
     }
   },
 
   zoo: {
     id: 'zoo',
-    name: 'Thảo Cầm Viên Safari',
-    subtext: 'Muông thú hoang dã & rồng thần',
+    name: 'Safari Zoo',
+    subtext: 'Wild beasts, prairie wildlife & mythic dragon',
     icon: '🦁',
     themeClass: 'theme-zoo',
     tiers: {
@@ -141,25 +143,25 @@ const THEME_CONFIGS = {
       1:   ['🐣', '🐭', '🐹', '🐥', '🐿️']
     },
     dead: {
-      100: { emoji: '👻', name: 'Oan hồn thú' },
-      15:  { emoji: '🪤', name: 'Bẫy thú rỗng' },
-      10:  { emoji: '🪨', name: 'Hóa thạch rêu' },
-      5:   { emoji: '🦴', name: 'Khúc xương khô' },
-      1:   { emoji: '🥚', name: 'Vỏ trứng rỗng' }
+      100: { emoji: '👻', name: 'Ghost Beast' },
+      15:  { emoji: '🪤', name: 'Empty Trap' },
+      10:  { emoji: '🪨', name: 'Moss Fossil' },
+      5:   { emoji: '🦴', name: 'Dry Bone' },
+      1:   { emoji: '🥚', name: 'Empty Eggshell' }
     },
     labels: {
-      100: 'Kỳ Lân Thần Bí (100d)',
-      15:  'Vua Muông Thú (15d)',
-      10:  'Thảo Nguyên Xanh (10d)',
-      5:   'Thú Rừng Năng Động (5d)',
-      1:   'Thú Nhỏ Sơ Sinh (1d)'
+      100: 'Mythic Dragon & Unicorn (100d)',
+      15:  'Apex Predator (15d)',
+      10:  'Prairie Creature (10d)',
+      5:   'Energetic Animal (5d)',
+      1:   'Baby Creature (1d)'
     }
   },
 
   aquarium: {
     id: 'aquarium',
-    name: 'Thủy Cung Đại Dương',
-    subtext: 'Thế giới san hô & cá biển sâu',
+    name: 'Ocean Aquarium',
+    subtext: 'Deep sea creatures, tropical fish & whale',
     icon: '🐬',
     themeClass: 'theme-aquarium',
     tiers: {
@@ -170,112 +172,25 @@ const THEME_CONFIGS = {
       1:   ['🦐', '🫧', '🐌']
     },
     dead: {
-      100: { emoji: '🚢', name: 'Tàu đắm đáy biển' },
-      15:  { emoji: '⚓', name: 'Mỏ neo rỉ sét' },
-      10:  { emoji: '🐟', name: 'Xương cá trôi dạt' },
-      5:   { emoji: '🪸', name: 'San hô bạc màu' },
-      1:   { emoji: '🫧', name: 'Bọt khí vỡ' }
+      100: { emoji: '🚢', name: 'Sunken Shipwreck' },
+      15:  { emoji: '⚓', name: 'Rusted Anchor' },
+      10:  { emoji: '🐟', name: 'Fish Skeleton' },
+      5:   { emoji: '🪸', name: 'Bleached Coral' },
+      1:   { emoji: '🫧', name: 'Popped Bubble' }
     },
     labels: {
-      100: 'Cá Voi Khổng Lồ (100d)',
-      15:  'Cá Heo & Sát Thủ Biển (15d)',
-      10:  'Rùa Biển & Bạch Tuộc (10d)',
-      5:   'Cá Nhiệt Đới (5d)',
-      1:   'Tép Biển Tí Hon (1d)'
-    }
-  },
-
-  galaxy: {
-    id: 'galaxy',
-    name: 'Vũ Trụ Thiên Hà',
-    subtext: 'Hành tinh, vì sao & hố đen bí ẩn',
-    icon: '🌌',
-    themeClass: 'theme-galaxy',
-    tiers: {
-      100: ['🌌', '✨', '🌠', '🎇'],
-      15:  ['🪐', '☀️', '🌟', '🌕'],
-      10:  ['🌍', '🌕', '🔴', '🛰️'],
-      5:   ['🚀', '🛸', '🛰️', '⭐'],
-      1:   ['☄️', '💫']
-    },
-    dead: {
-      100: { emoji: '🕳️', name: 'Hố đen cô độc' },
-      15:  { emoji: '💥', name: 'Tàn dư siêu tân tinh' },
-      10:  { emoji: '📡', name: 'Vệ tinh mất sóng' },
-      5:   { emoji: '🌫️', name: 'Bụi đen vũ trụ' },
-      1:   { emoji: '🌑', name: 'Đá thiên thạch nguội' }
-    },
-    labels: {
-      100: 'Dải Ngân Hà Rực Rỡ (100d)',
-      15:  'Mặt Trời & Sao Thổ (15d)',
-      10:  'Hành Tinh Sự Sống (10d)',
-      5:   'Tàu Thám Hiểm Không Gian (5d)',
-      1:   'Bụi Sao Khởi Nguyên (1d)'
-    }
-  },
-
-  rpg: {
-    id: 'rpg',
-    name: 'Đấu Trường Hiệp Sĩ RPG',
-    subtext: 'Trang bị thần thoại, kiếm rồng & cúp vô địch',
-    icon: '⚔️',
-    themeClass: 'theme-rpg',
-    tiers: {
-      100: ['👑', '🐲', '🏆', '💎'],
-      15:  ['⚔️', '🛡️', '🧙‍♂️', '⚜️'],
-      10:  ['🔮', '🏹', '🦄', '🗡️'],
-      5:   ['🗡️', '🛡️', '🧪', '🏹'],
-      1:   ['🗡️', '🪙']
-    },
-    dead: {
-      100: { emoji: '👻', name: 'Linh hồn chiến binh' },
-      15:  { emoji: '☠️', name: 'Hộp sọ cổ xưa' },
-      10:  { emoji: '🪦', name: 'Bia mộ rêu phong' },
-      5:   { emoji: '🪓', name: 'Rìu cùn rỉ sét' },
-      1:   { emoji: '🪵', name: 'Khiên gỗ nứt vỡ' }
-    },
-    labels: {
-      100: 'Vương Miện Hoàng Gia (100d)',
-      15:  'Song Kiếm Thánh (15d)',
-      10:  'Cầu Phép & Thú Cưỡi (10d)',
-      5:   'Bộ Giáp Sắt Hiệp Sĩ (5d)',
-      1:   'Dao Găm Tân Thủ (1d)'
-    }
-  },
-
-  cyberpunk: {
-    id: 'cyberpunk',
-    name: 'Thành Phố Neon Cyberpunk',
-    subtext: 'Công nghệ lượng tử, Cyborg & AI tối thượng',
-    icon: '🤖',
-    themeClass: 'theme-cyberpunk',
-    tiers: {
-      100: ['⚡', '🔮', '🧬', '💥'],
-      15:  ['🏙️', '🛸', '🚁', '🛰️'],
-      10:  ['🤖', '🦾', '🥽', '💾'],
-      5:   ['💾', '🔋', '📡', '🕹️'],
-      1:   ['🔌', '💡']
-    },
-    dead: {
-      100: { emoji: '💥', name: 'Chập mạch sụp đổ' },
-      15:  { emoji: '🗑️', name: 'Bãi rác vi mạch' },
-      10:  { emoji: '💻', name: 'Màn hình xanh lỗi' },
-      5:   { emoji: '🪫', name: 'Pin cạn kiệt nguồn' },
-      1:   { emoji: '🔌', name: 'Mối hàn cháy đứt' }
-    },
-    labels: {
-      100: 'Trí Tuệ Nhân Tạo AGI (100d)',
-      15:  'Đô Thị Neon Tương Lai (15d)',
-      10:  'Chiến Binh Cyborg (10d)',
-      5:   'Ổ Đĩa & Pin Hạt Nhân (5d)',
-      1:   'Vi Mạch Phát Sáng (1d)'
+      100: 'Colossal Whale (100d)',
+      15:  'Playful Dolphin & Shark (15d)',
+      10:  'Sea Turtle & Octopus (10d)',
+      5:   'Tropical Reef Fish (5d)',
+      1:   'Tiny Sea Shrimp (1d)'
     }
   },
 
   candy: {
     id: 'candy',
-    name: 'Vương Quốc Kẹo Ngọt',
-    subtext: 'Bánh kem hoàng gia, donut & socola',
+    name: 'Candy Land',
+    subtext: 'Cupcakes, donuts, chocolate & dessert palace',
     icon: '🍭',
     themeClass: 'theme-candy',
     tiers: {
@@ -286,27 +201,27 @@ const THEME_CONFIGS = {
       1:   ['🍭']
     },
     dead: {
-      100: { emoji: '📦', name: 'Hộp bánh mốc bỏ quên' },
-      15:  { emoji: '🦷', name: 'Răng sâu hư hỏng' },
-      10:  { emoji: '🧻', name: 'Giấy gói kẹo rỗng' },
-      5:   { emoji: '🍪', name: 'Bánh vụn rơi rớt' },
-      1:   { emoji: '🐜', name: 'Kẹo rơi kiến bu' }
+      100: { emoji: '📦', name: 'Abandoned Moldy Box' },
+      15:  { emoji: '🦷', name: 'Cavity Tooth' },
+      10:  { emoji: '🧻', name: 'Empty Wrapper' },
+      5:   { emoji: '🍪', name: 'Stale Cookie Crumb' },
+      1:   { emoji: '🐜', name: 'Fallen Sugar Candy' }
     },
     labels: {
-      100: 'Lâu Đài Bánh Kẹo (100d)',
-      15:  'Bánh Sinh Nhật Hoàng Gia (15d)',
-      10:  'Donut & Cupcake Thượng Hạng (10d)',
-      5:   'Thỏi Socola Béo Ngậy (5d)',
-      1:   'Kẹo Mút Que Nhỏ (1d)'
+      100: 'Candy Castle (100d)',
+      15:  'Royal Birthday Cake (15d)',
+      10:  'Glazed Donut & Cupcake (10d)',
+      5:   'Chocolate Bar (5d)',
+      1:   'Lollipop Sprout (1d)'
     }
   },
 
   custom: {
     id: 'custom',
-    name: 'Biểu Tượng Tùy Chỉnh',
-    subtext: 'Thế giới theo phong cách cá nhân',
+    name: 'Custom Icon Theme',
+    subtext: 'Your personalized icon universe',
     icon: '⭐',
-    themeClass: 'theme-galaxy',
+    themeClass: 'theme-custom',
     tiers: {
       100: ['👑', '🌟', '💎'],
       15:  ['🏆', '🥇', '✨'],
@@ -315,18 +230,18 @@ const THEME_CONFIGS = {
       1:   ['⭐']
     },
     dead: {
-      100: { emoji: '👻', name: 'Hồn ma' },
-      15:  { emoji: '☠️', name: 'Đầu lâu' },
-      10:  { emoji: '🪨', name: 'Hòn đá' },
-      5:   { emoji: '🍂', name: 'Lá úa' },
-      1:   { emoji: '🌾', name: 'Cỏ khô' }
+      100: { emoji: '👻', name: 'Lost Spirit' },
+      15:  { emoji: '☠️', name: 'Skull' },
+      10:  { emoji: '🪨', name: 'Cold Stone' },
+      5:   { emoji: '🍂', name: 'Withered Leaf' },
+      1:   { emoji: '🌾', name: 'Dry Straw' }
     },
     labels: {
-      100: 'Cấp Huyền Thoại (100d)',
-      15:  'Cấp Xuất Sắc (15d)',
-      10:  'Cấp Nổi Bật (10d)',
-      5:   'Cấp Tiến Bộ (5d)',
-      1:   'Khởi Đầu (1d)'
+      100: 'Legendary Tier (100d)',
+      15:  'Champion Tier (15d)',
+      10:  'Star Tier (10d)',
+      5:   'Progress Tier (5d)',
+      1:   'First Step (1d)'
     }
   }
 };
@@ -401,10 +316,10 @@ class StreakEngine {
     let graceApplied = false;
 
     if (goal.streak && goal.streak.last_completed_date === yesterdayStr) {
-      // Completed yesterday -> standard increment
+      // Completed yesterday -> standard consecutive increment
       nextStreak += 1;
     } else if (goal.streak && goal.streak.last_completed_date === dayBeforeYesterdayStr) {
-      // Missed yesterday, but completed day before -> Grace Period activated!
+      // Missed yesterday, but completed day before -> Grace Period forgiven!
       nextStreak += 1;
       graceApplied = true;
     } else {
@@ -531,7 +446,7 @@ class StreakEngine {
               emoji,
               label: `${tier}d`,
               date: repDate,
-              title: config.labels[tier] || `${tier} ngày liên tiếp`
+              title: config.labels[tier] || `${tier} Days Streak`
             });
             idx += tier;
           }
@@ -553,7 +468,7 @@ class StreakEngine {
             emoji,
             label: '1d',
             date: singleDate,
-            title: config.labels[1] || '1 ngày hoàn thành'
+            title: config.labels[1] || '1 Day Completed'
           });
         }
 
@@ -565,7 +480,7 @@ class StreakEngine {
           else if (gapDays >= 10) deadTier = 10;
           else if (gapDays >= 5) deadTier = 5;
 
-          const deadInfo = config.dead[deadTier] || { emoji: '🌾', name: 'Rơm khô' };
+          const deadInfo = config.dead[deadTier] || { emoji: '🌾', name: 'Dry Straw' };
           const fromDate = runDates[runDates.length - 1];
           const toDate = sorted[i];
 
@@ -575,8 +490,8 @@ class StreakEngine {
             emoji: deadInfo.emoji,
             label: `${gapDays}m`,
             gapDays,
-            title: `Bỏ lỡ ${gapDays} ngày (${deadInfo.name})`,
-            dateDesc: `Từ ${fromDate} đến ${toDate}`
+            title: `Missed ${gapDays} days (${deadInfo.name})`,
+            dateDesc: `From ${fromDate} to ${toDate}`
           });
           runStart = i;
         }
@@ -600,7 +515,7 @@ class AppStorage {
       if (!data) return [];
       return JSON.parse(data);
     } catch (e) {
-      console.error('Lỗi đọc localStorage:', e);
+      console.error('Error reading localStorage:', e);
       return [];
     }
   }
@@ -609,7 +524,7 @@ class AppStorage {
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(goals));
     } catch (e) {
-      console.error('Lỗi lưu localStorage:', e);
+      console.error('Error saving localStorage:', e);
     }
   }
 
@@ -642,7 +557,7 @@ class AppStorage {
   static async syncWithFirebase(showNotifications = false) {
     const cfg = this.getFirebaseConfig();
     if (!cfg.databaseUrl || !cfg.userSyncId) {
-      return { success: false, message: 'Chưa cấu hình Firebase URL hoặc User ID' };
+      return { success: false, message: 'Missing Firebase Database URL or User Sync ID' };
     }
 
     const cleanDbUrl = cfg.databaseUrl.replace(/\/+$/, '');
@@ -686,7 +601,7 @@ class AppStorage {
           // New goal from another device
           mergedMap.set(rGoal.id, rGoal);
         } else {
-          // Both have this goal -> Union Merge history!
+          // Both devices have this goal -> Union Merge history!
           const lGoal = mergedMap.get(rGoal.id);
           const combinedDates = Array.from(new Set([...(lGoal.streak_dates || []), ...(rGoal.streak_dates || [])])).sort();
 
@@ -695,7 +610,7 @@ class AppStorage {
 
           mergedMap.set(rGoal.id, {
             ...rGoal,
-            ...lGoal, // keep local edits if any
+            ...lGoal, // keep latest local fields
             streak: healed,
             streak_dates: combinedDates
           });
@@ -715,7 +630,7 @@ class AppStorage {
       });
 
       if (!pushResp.ok) {
-        throw new Error(`Lỗi cập nhật Remote: ${pushResp.status}`);
+        throw new Error(`Failed to update Remote: ${pushResp.status}`);
       }
 
       return { success: true, count: finalGoals.length };
@@ -772,9 +687,11 @@ class AppController {
     this.formGoalContent = document.getElementById('formGoalContent');
     this.formGoalCategory = document.getElementById('formGoalCategory');
     this.formDailyTarget = document.getElementById('formDailyTarget');
+    this.customTargetInputContainer = document.getElementById('customTargetInputContainer');
     this.formCadence = document.getElementById('formCadence');
     this.formDeadline = document.getElementById('formDeadline');
     this.formTargetStreak = document.getElementById('formTargetStreak');
+    this.btnAutoCalculateDeadline = document.getElementById('btnAutoCalculateDeadline');
     this.formReminderTime = document.getElementById('formReminderTime');
     this.formCustomEmoji = document.getElementById('formCustomEmoji');
     this.customEmojiBox = document.getElementById('customEmojiBox');
@@ -831,6 +748,27 @@ class AppController {
     this.btnCloseGoalModal.addEventListener('click', () => this.closeGoalModal());
     this.btnCancelGoalModal.addEventListener('click', () => this.closeGoalModal());
     this.goalForm.addEventListener('submit', (e) => this.handleGoalFormSubmit(e));
+
+    // Target mode toggle (tick vs custom amount)
+    document.querySelectorAll('input[name="targetMode"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'custom') {
+          this.customTargetInputContainer.classList.remove('hidden');
+          this.formDailyTarget.focus();
+        } else {
+          this.customTargetInputContainer.classList.add('hidden');
+        }
+      });
+    });
+
+    // Auto-calculate Target Deadline from Milestone
+    this.btnAutoCalculateDeadline.addEventListener('click', () => {
+      const days = parseInt(this.formTargetStreak.value, 10) || 30;
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + days);
+      this.formDeadline.value = StreakEngine.formatDate(targetDate);
+      this.showToast(`⚡ Deadline set to ${this.formDeadline.value} (${days} days from today)`);
+    });
 
     // Theme selector radios
     document.querySelectorAll('input[name="goalTheme"]').forEach(radio => {
@@ -919,7 +857,7 @@ class AppController {
   loadInitialData() {
     this.goals = AppStorage.getGoals();
 
-    // If completely new user, generate welcoming default goals showcasing different themes!
+    // If completely new user, generate default goals
     if (this.goals.length === 0) {
       this.goals = this.getDefaultGoals();
       AppStorage.saveGoals(this.goals);
@@ -951,10 +889,10 @@ class AppController {
     return [
       {
         id: 'goal_deutsch_c1',
-        title: 'Học tiếng Đức C1 & Từ Vựng Chuyên Ngành',
-        content: 'Hoàn thành ít nhất 1 bài tập ngữ pháp & đọc báo Die Zeit 30 phút mỗi ngày.',
+        title: 'German C1 & Vocabulary Practice',
+        content: 'Complete at least 1 grammar drill and read German articles daily.',
         category: 'study',
-        daily_target: '30 phút',
+        daily_target: '30 mins',
         cadence: 'daily',
         deadline: '2026-12-31',
         target_streak: 100,
@@ -970,11 +908,11 @@ class AppController {
         streak_dates: [StreakEngine.formatDate(d3), StreakEngine.formatDate(d2), StreakEngine.formatDate(d1)]
       },
       {
-        id: 'goal_gym_fitness',
-        title: 'Chạy Bộ & Rèn Luyện Thể Lực',
-        content: 'Chạy bộ tối thiểu 3km hoặc tập Cardio giữ gìn sức khỏe dẻo dai.',
+        id: 'goal_running',
+        title: 'Morning 3km Run & Fitness',
+        content: 'Cardio workout and light stretching to build core physical endurance.',
         category: 'health',
-        daily_target: '3 km / 25 phút',
+        daily_target: 'Just tick ✓',
         cadence: 'daily',
         deadline: '',
         target_streak: 30,
@@ -990,16 +928,16 @@ class AppController {
         streak_dates: [StreakEngine.formatDate(d2), StreakEngine.formatDate(d1)]
       },
       {
-        id: 'goal_deep_work',
-        title: 'Lập Trình & Phát Triển Dự Án Cá Nhân',
-        content: 'Code liên tục không phân tâm, tập trung giải quyết 1 tính năng cốt lõi.',
-        category: 'work',
-        daily_target: '45 phút',
+        id: 'goal_reading',
+        title: 'Read Books & Mindful Reflection',
+        content: 'Read insightful non-fiction chapters before going to sleep.',
+        category: 'mind',
+        daily_target: '15 mins',
         cadence: 'daily',
         deadline: '2026-11-30',
         target_streak: 60,
-        reminder_time: '21:00',
-        theme: 'galaxy',
+        reminder_time: '22:00',
+        theme: 'aquarium',
         custom_emoji: '',
         created_at: StreakEngine.formatDate(d1),
         streak: {
@@ -1075,12 +1013,12 @@ class AppController {
 
       // Category badge
       const catMap = {
-        study: { label: 'Học Tập', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30' },
-        health: { label: 'Sức Khỏe', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
-        work: { label: 'Công Việc', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
-        mind: { label: 'Tinh Thần', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
-        finance: { label: 'Tài Chính', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
-        other: { label: 'Đời Sống', color: 'bg-slate-500/20 text-slate-300 border-slate-500/30' }
+        study: { label: 'Study', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30' },
+        health: { label: 'Health', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+        work: { label: 'Work', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
+        mind: { label: 'Wellness', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+        finance: { label: 'Finance', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+        other: { label: 'Other', color: 'bg-slate-500/20 text-slate-300 border-slate-500/30' }
       };
       const cat = catMap[goal.category] || catMap.other;
 
@@ -1089,13 +1027,18 @@ class AppController {
       if (goal.deadline) {
         const diff = StreakEngine.diffDays(new Date(), StreakEngine.parseDate(goal.deadline));
         if (diff < 0) {
-          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30 font-medium">Hết hạn (${Math.abs(diff)} ngày)</span>`;
+          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30 font-medium">Overdue (${Math.abs(diff)}d)</span>`;
         } else if (diff === 0) {
-          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 font-medium">Hạn chót hôm nay!</span>`;
+          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 font-medium">Due Today!</span>`;
         } else {
-          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium">Còn ${diff} ngày</span>`;
+          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium">${diff} days left</span>`;
         }
       }
+
+      // Display Target
+      const targetDisplay = goal.daily_target && goal.daily_target !== 'Just tick ✓'
+        ? `<strong>Target:</strong> ${this.escapeHtml(goal.daily_target)}`
+        : `<strong>Target:</strong> Tick ✓ to complete`;
 
       return `
         <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 hover:border-slate-600/80 group">
@@ -1109,10 +1052,10 @@ class AppController {
 
             <!-- Quick Actions Dropdown / Buttons -->
             <div class="flex items-center gap-1">
-              <button onclick="app.openEditGoal('${goal.id}')" title="Chỉnh sửa mục tiêu" class="w-7 h-7 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center text-xs transition">
+              <button onclick="app.openEditGoal('${goal.id}')" title="Edit goal" class="w-7 h-7 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center text-xs transition">
                 ✏️
               </button>
-              <button onclick="app.deleteGoal('${goal.id}')" title="Xóa mục tiêu" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 flex items-center justify-center text-xs transition">
+              <button onclick="app.deleteGoal('${goal.id}')" title="Delete goal" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 flex items-center justify-center text-xs transition">
                 🗑️
               </button>
             </div>
@@ -1126,7 +1069,7 @@ class AppController {
             ${goal.content ? `<p class="text-xs text-slate-400 line-clamp-2 mt-1 leading-relaxed">${this.escapeHtml(goal.content)}</p>` : ''}
             
             <div class="flex items-center gap-3 mt-2.5 text-[11px] text-slate-400">
-              ${goal.daily_target ? `<span class="flex items-center gap-1">🎯 <strong>Mục tiêu:</strong> ${this.escapeHtml(goal.daily_target)}</span>` : ''}
+              <span class="flex items-center gap-1">🎯 ${targetDisplay}</span>
               ${goal.reminder_time ? `<span class="flex items-center gap-1">⏰ ${goal.reminder_time}</span>` : ''}
             </div>
           </div>
@@ -1140,10 +1083,10 @@ class AppController {
               </div>
               <div>
                 <div class="text-base font-black text-amber-400 leading-tight">
-                  ${streakCount} <span class="text-xs font-semibold text-slate-400">ngày</span>
+                  ${streakCount} <span class="text-xs font-semibold text-slate-400">days</span>
                 </div>
                 <div class="text-[10px] text-slate-400 font-medium">
-                  Kỷ lục: <strong class="text-rose-400">${longestCount}</strong> ngày
+                  Best: <strong class="text-rose-400">${longestCount}</strong> days
                 </div>
               </div>
             </div>
@@ -1155,7 +1098,7 @@ class AppController {
                 class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm"
               >
                 <span>${displayIcon}</span>
-                <span class="hidden xs:inline">Vào Thế Giới</span>
+                <span class="hidden xs:inline">Enter World</span>
               </button>
 
               <button
@@ -1166,7 +1109,7 @@ class AppController {
                     : 'bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white shadow-amber-500/25 active:scale-95'
                 }"
               >
-                ${isCompletedToday ? '<span>✓</span><span>Đã Xong</span>' : '<span>Check-in</span><span>🔥</span>'}
+                ${isCompletedToday ? '<span>✓</span><span>Completed</span>' : '<span>Check-in</span><span>🔥</span>'}
               </button>
             </div>
           </div>
@@ -1209,11 +1152,11 @@ class AppController {
       this.triggerCloudSync(false);
 
       if (result.graceApplied) {
-        this.showToast('🛡️ Cơ chế tha thứ 1 ngày (Grace Period) đã tự động cứu chuỗi Streak của bạn!');
+        this.showToast('🛡️ 1-Day Grace Period applied: Your streak is protected and continued!');
       }
     } else {
       SoundFX.playPop();
-      this.showToast('Hôm nay bạn đã hoàn thành mục tiêu này rồi! Chuỗi được bảo toàn! ✨');
+      this.showToast('Already completed today! Your streak is fully secured! ✨');
     }
   }
 
@@ -1223,33 +1166,56 @@ class AppController {
   openGoalModal(editingGoal = null) {
     this.goalForm.reset();
     this.customEmojiBox.classList.add('hidden');
+    this.customTargetInputContainer.classList.add('hidden');
 
     if (editingGoal) {
-      this.goalModalTitle.textContent = '✏️ Chỉnh Sửa Mục Tiêu';
+      this.goalModalTitle.textContent = '✏️ Edit Goal';
       this.formGoalId.value = editingGoal.id;
       this.formGoalTitle.value = editingGoal.title;
       this.formGoalContent.value = editingGoal.content || '';
       this.formGoalCategory.value = editingGoal.category || 'study';
-      this.formDailyTarget.value = editingGoal.daily_target || '';
+
+      // Daily target handling
+      if (editingGoal.daily_target && editingGoal.daily_target !== 'Just tick ✓') {
+        const customRadio = document.querySelector('input[name="targetMode"][value="custom"]');
+        if (customRadio) customRadio.checked = true;
+        this.customTargetInputContainer.classList.remove('hidden');
+        this.formDailyTarget.value = editingGoal.daily_target;
+      } else {
+        const tickRadio = document.querySelector('input[name="targetMode"][value="tick"]');
+        if (tickRadio) tickRadio.checked = true;
+        this.formDailyTarget.value = '';
+      }
+
       this.formCadence.value = editingGoal.cadence || 'daily';
       this.formDeadline.value = editingGoal.deadline || '';
       this.formTargetStreak.value = editingGoal.target_streak || 30;
       this.formReminderTime.value = editingGoal.reminder_time || '20:00';
 
       const themeRadio = document.querySelector(`input[name="goalTheme"][value="${editingGoal.theme || 'garden'}"]`);
-      if (themeRadio) themeRadio.checked = true;
+      if (themeRadio) {
+        themeRadio.checked = true;
+      } else {
+        // fallback if previous theme was one of the removed ones
+        const gardenRadio = document.querySelector('input[name="goalTheme"][value="garden"]');
+        if (gardenRadio) gardenRadio.checked = true;
+      }
 
       if (editingGoal.theme === 'custom') {
         this.customEmojiBox.classList.remove('hidden');
         this.formCustomEmoji.value = editingGoal.custom_emoji || '';
       }
     } else {
-      this.goalModalTitle.textContent = '🎯 Thiết Lập Mục Tiêu Mới';
+      this.goalModalTitle.textContent = '🎯 Set Up New Goal';
       this.formGoalId.value = '';
       this.formGoalCategory.value = 'study';
       this.formCadence.value = 'daily';
       this.formTargetStreak.value = '30';
       this.formReminderTime.value = '20:00';
+
+      const tickRadio = document.querySelector('input[name="targetMode"][value="tick"]');
+      if (tickRadio) tickRadio.checked = true;
+
       const defaultTheme = document.querySelector('input[name="goalTheme"][value="garden"]');
       if (defaultTheme) defaultTheme.checked = true;
     }
@@ -1269,7 +1235,12 @@ class AppController {
     const title = this.formGoalTitle.value.trim();
     const content = this.formGoalContent.value.trim();
     const category = this.formGoalCategory.value;
-    const daily_target = this.formDailyTarget.value.trim();
+
+    const targetMode = document.querySelector('input[name="targetMode"]:checked')?.value || 'tick';
+    const daily_target = targetMode === 'custom' && this.formDailyTarget.value.trim()
+      ? this.formDailyTarget.value.trim()
+      : 'Just tick ✓';
+
     const cadence = this.formCadence.value;
     const deadline = this.formDeadline.value;
     const target_streak = parseInt(this.formTargetStreak.value, 10) || 30;
@@ -1297,7 +1268,7 @@ class AppController {
         theme,
         custom_emoji
       };
-      this.showToast('Đã cập nhật mục tiêu thành công! ✅');
+      this.showToast('Goal updated successfully! ✅');
     } else {
       // Create new
       const newGoal = {
@@ -1321,7 +1292,7 @@ class AppController {
         streak_dates: []
       };
       this.goals.unshift(newGoal);
-      this.showToast('Đã tạo mục tiêu mới! Hãy check-in để bắt đầu chuỗi nhé 🔥');
+      this.showToast('New goal created! Tap Check-in to start your streak 🔥');
     }
 
     AppStorage.saveGoals(this.goals);
@@ -1340,13 +1311,13 @@ class AppController {
   deleteGoal(goalId) {
     const goal = this.goals.find(g => g.id === goalId);
     if (!goal) return;
-    if (confirm(`Bạn có chắc chắn muốn xóa mục tiêu "${goal.title}" không? Lịch sử streak của mục tiêu này sẽ bị xóa.`)) {
+    if (confirm(`Are you sure you want to delete "${goal.title}"? This goal's streak history will be removed.`)) {
       this.goals = this.goals.filter(g => g.id !== goalId);
       AppStorage.saveGoals(this.goals);
       this.renderStats();
       this.renderGoals();
       this.triggerCloudSync(false);
-      this.showToast('Đã xóa mục tiêu. 🗑️');
+      this.showToast('Goal deleted. 🗑️');
     }
   }
 
@@ -1370,8 +1341,8 @@ class AppController {
     // Stats
     const curr = goal.streak ? goal.streak.current_streak : 0;
     const longest = goal.streak ? goal.streak.longest_streak : 0;
-    this.worldCurrentStreak.textContent = `${curr} ngày`;
-    this.worldLongestStreak.textContent = `${longest} ngày`;
+    this.worldCurrentStreak.textContent = `${curr} days`;
+    this.worldLongestStreak.textContent = `${longest} days`;
 
     // Render items grid
     const items = StreakEngine.generateWorldItems(goal.streak_dates || [], goal.theme, goal.custom_emoji);
@@ -1382,8 +1353,8 @@ class AppController {
       this.worldSlotsGrid.innerHTML = `
         <div class="col-span-full py-12 text-center text-slate-400">
           <div class="text-4xl mb-2">${displayIcon}</div>
-          <p class="text-xs">Chưa có ngày học nào được ghi nhận cho mục tiêu này.</p>
-          <p class="text-[11px] text-slate-500 mt-1">Hãy nhấn "Check-in" để gieo mầm hạt giống đầu tiên!</p>
+          <p class="text-xs">No check-ins recorded yet for this goal.</p>
+          <p class="text-[11px] text-slate-500 mt-1">Tap "Check-in" on the dashboard to plant your very first seed!</p>
         </div>
       `;
     } else {
@@ -1413,10 +1384,10 @@ class AppController {
 
     // Populate Audit Log drawer
     const dates = (goal.streak_dates || []).slice().reverse();
-    this.auditTotalCount.textContent = `${dates.length} ngày`;
+    this.auditTotalCount.textContent = `${dates.length} days`;
     this.auditDatesList.innerHTML = dates.length > 0
-      ? dates.map(d => `<div class="py-0.5 border-b border-slate-900 flex justify-between"><span>${d}</span><span class="text-emerald-400">✓ Đã hoàn thành</span></div>`).join('')
-      : '<div class="text-slate-500">Chưa có dữ liệu</div>';
+      ? dates.map(d => `<div class="py-0.5 border-b border-slate-900 flex justify-between"><span>${d}</span><span class="text-emerald-400">✓ Completed</span></div>`).join('')
+      : '<div class="text-slate-500">No recorded check-in dates yet</div>';
 
     this.worldModal.classList.remove('opacity-0', 'pointer-events-none');
     this.worldModalBox.classList.remove('translate-y-8');
@@ -1433,9 +1404,9 @@ class AppController {
     this.slotDetailTitle.textContent = item.title;
 
     if (item.type === 'healthy') {
-      this.slotDetailDesc.textContent = `Hoàn thành ngày ${item.date} (${item.label})`;
+      this.slotDetailDesc.textContent = `Completed on ${item.date} (${item.label})`;
     } else {
-      this.slotDetailDesc.textContent = `${item.dateDesc} (Bị gián đoạn ${item.gapDays} ngày)`;
+      this.slotDetailDesc.textContent = `${item.dateDesc} (Interrupted for ${item.gapDays} days)`;
     }
   }
 
@@ -1454,7 +1425,7 @@ class AppController {
             <span class="text-[10px] text-slate-500">/</span>
             <span class="opacity-70">${deadInfo.emoji}</span>
           </div>
-          <span class="text-[10px] font-black text-indigo-300 uppercase">${t} Ngày</span>
+          <span class="text-[10px] font-black text-indigo-300 uppercase">${t} Days</span>
           <span class="text-[9px] text-slate-400 truncate max-w-full">${themeConfig.labels[t]}</span>
         </div>
       `;
@@ -1480,7 +1451,7 @@ class AppController {
     this.openWorldModal(this.currentWorldGoalId);
     this.renderStats();
     this.renderGoals();
-    this.showToast('✨ Đã tự phục hồi chuỗi Streak chuẩn xác 100% từ lịch sử audit log!');
+    this.showToast('✨ Streak self-healed accurately from your check-in audit log!');
   }
 
   // ========================================================================
@@ -1510,12 +1481,12 @@ class AppController {
 
     AppStorage.saveFirebaseConfig(cfg);
     this.closeFirebaseModal();
-    this.showToast('Đã lưu cấu hình Firebase Cloud! Đang đồng bộ...');
+    this.showToast('Firebase configuration saved! Syncing now...');
     this.triggerCloudSync(true);
   }
 
   async testFirebaseConnection() {
-    this.firebaseStatusBadge.textContent = 'Đang kiểm tra... ⏳';
+    this.firebaseStatusBadge.textContent = 'Testing connection... ⏳';
     this.firebaseStatusBadge.className = 'font-bold text-amber-400';
 
     const cfg = {
@@ -1527,25 +1498,25 @@ class AppController {
 
     const result = await AppStorage.syncWithFirebase(false);
     if (result.success) {
-      this.firebaseStatusBadge.textContent = '🟢 Kết nối thành công!';
+      this.firebaseStatusBadge.textContent = '🟢 Connected Successfully!';
       this.firebaseStatusBadge.className = 'font-bold text-emerald-400';
     } else {
-      this.firebaseStatusBadge.textContent = `🔴 Lỗi: ${result.error || result.message}`;
+      this.firebaseStatusBadge.textContent = `🔴 Error: ${result.error || result.message}`;
       this.firebaseStatusBadge.className = 'font-bold text-rose-400';
     }
   }
 
   async triggerCloudSync(interactive = false) {
-    if (interactive) this.showToast('Đang chạy thuật toán Union Merge với máy chủ Firebase...');
+    if (interactive) this.showToast('Running Union Merge algorithm with Firebase RTDB...');
 
     this.syncStatusDot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-spin';
-    this.syncStatusText.textContent = 'Đang đồng bộ...';
+    this.syncStatusText.textContent = 'Syncing...';
 
     const result = await AppStorage.syncWithFirebase(interactive);
 
     if (result.success) {
       this.syncStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
-      this.syncStatusText.textContent = 'Đã đồng bộ 🟢';
+      this.syncStatusText.textContent = 'Synced 🟢';
 
       // Reload goals from local storage since union merge might have brought new goals
       this.goals = AppStorage.getGoals();
@@ -1554,14 +1525,14 @@ class AppController {
 
       if (interactive) {
         SoundFX.playSuccess();
-        this.showToast(`🎉 Đồng bộ thành công! (${result.count} mục tiêu đã được hợp nhất)`);
+        this.showToast(`🎉 Sync completed! (${result.count} goals unified)`);
       }
     } else {
       this.syncStatusDot.className = 'w-2 h-2 rounded-full bg-slate-500';
-      this.syncStatusText.textContent = 'Ngoại tuyến 🟡';
+      this.syncStatusText.textContent = 'Offline 🟡';
 
       if (interactive) {
-        this.showToast(`⚠️ Không thể kết nối Firebase: ${result.error || result.message}. Dữ liệu vẫn được lưu 100% trên thiết bị!`);
+        this.showToast(`⚠️ Cloud notice: ${result.error || result.message}. Data is 100% safe offline on this device!`);
       }
     }
   }
@@ -1580,7 +1551,7 @@ class AppController {
     a.download = `streak-universe-backup-${StreakEngine.formatDate()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    this.showToast('Đã xuất file sao lưu JSON thành công! 💾');
+    this.showToast('JSON backup exported successfully! 💾');
   }
 
   importJsonBackup(event) {
@@ -1592,7 +1563,7 @@ class AppController {
       try {
         const parsed = JSON.parse(e.target.result);
         const importedGoals = Array.isArray(parsed) ? parsed : (parsed.goals || []);
-        if (!Array.isArray(importedGoals)) throw new Error('Cấu trúc file JSON không hợp lệ');
+        if (!Array.isArray(importedGoals)) throw new Error('Invalid JSON file format');
 
         // Merge with current goals
         const map = new Map();
@@ -1617,10 +1588,10 @@ class AppController {
         AppStorage.saveGoals(this.goals);
         this.renderStats();
         this.renderGoals();
-        this.showToast('Đã nhập dữ liệu JSON thành công! 🎉');
+        this.showToast('JSON data imported and unified! 🎉');
         this.closeFirebaseModal();
       } catch (err) {
-        alert('Lỗi khi đọc file JSON: ' + err.message);
+        alert('Error parsing JSON backup file: ' + err.message);
       }
     };
     reader.readAsText(file);
@@ -1663,7 +1634,7 @@ class AppController {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(err => {
-      console.warn('SW register note:', err);
+      console.warn('SW register notice:', err);
     });
   });
 }
@@ -1672,5 +1643,5 @@ if ('serviceWorker' in navigator) {
 let app = null;
 window.addEventListener('DOMContentLoaded', () => {
   app = new AppController();
-  window.app = app; // expose globally for HTML click handlers
+  window.app = app;
 });
