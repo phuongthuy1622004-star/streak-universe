@@ -1,4 +1,4 @@
-const APP_VERSION = '7';
+const APP_VERSION = '8';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -88,80 +88,80 @@ const THEME_CONFIGS = {
     name: 'Magic Garden', subtext: 'Plants grow as you streak!',
     icon: '🌱', themeClass: 'theme-garden',
     tiers: {
-      1:   ['🌱', '🌿', '🍀'],              // tiny sprout
-      5:   ['🌳', '🌲', '🌴', '🎋'],         // tree
-      10:  ['🌸', '🌷', '🌻', '🌹', '🌺'],   // blooming flower
-      15:  ['🍑', '🍓', '🍎', '🍊', '🍋', '🍇', '🍉'], // fruit
-      100: ['💎', '👑', '🌟', '💖', '🏆']   // legendary
+      1:   ['🌱', '🌿', '🍀'],                          // tiny sprout, leaf, clover
+      5:   ['🪴', '🌲', '🌳', '🌴', '🎋'],              // potted plant, evergreen, shade tree, palm, bamboo
+      10:  ['🌸', '🌷', '🌻', '🌹', '🌺', '🌼'],        // blooming flowers
+      15:  ['🍎', '🍓', '🍑', '🍊', '🍋', '🍇', '🍉'],   // sweet fruits
+      100: ['💎', '👑', '🌟', '💖', '🏆']               // legendary treasures
     },
     dead: {
       1:   { emoji: '🌾', name: 'Dry Straw' },
       5:   { emoji: '🍂', name: 'Fallen Leaf' },
-      10:  { emoji: '🪵', name: 'Dead Log' },
-      15:  { emoji: '☠️', name: 'Skull' },
-      100: { emoji: '👻', name: 'Ghost' }
+      10:  { emoji: '🥀', name: 'Withered Flower' },
+      15:  { emoji: '🪵', name: 'Dead Log' },
+      100: { emoji: '☠️', name: 'Ancient Skull' }
     },
-    labels: { 1: 'Sprout', 5: 'Tree', 10: 'Flower', 15: 'Fruit', 100: 'Legendary' }
+    labels: { 1: 'Sprout', 5: 'Plant & Tree', 10: 'Flower', 15: 'Fruit', 100: 'Legendary' }
   },
 
   zoo: {
     name: 'Safari Zoo', subtext: 'Raise wild creatures day by day!',
     icon: '🦁', themeClass: 'theme-zoo',
     tiers: {
-      1:   ['🐣', '🐥', '🐹', '🐭', '🐿️'],          // tiny baby
-      5:   ['🐰', '🦝', '🐨', '🐼', '🐺', '🦊'],     // small cute
-      10:  ['🦌', '🐴', '🦓', '🦒', '🦘', '🦙'],     // medium
-      15:  ['🦁', '🐯', '🐻', '🐘', '🦏', '🦛'],     // apex
-      100: ['🐉', '🦄', '✨', '🔱']                   // mythic
+      1:   ['🐣', '🐥', '🐹', '🐭', '🐿️'],              // tiny baby & nestling
+      5:   ['🐰', '🦔', '🦊', '🦝', '🐨', '🐼'],         // small cute critters
+      10:  ['🦌', '🦓', '🦒', '🦘', '🦙', '🐴'],         // savannah grazers & runners
+      15:  ['🦁', '🐯', '🐻', '🐘', '🦏', '🦛'],         // apex predators & giants
+      100: ['🐉', '🦄', '🦅', '👑', '✨']               // mythical legends
     },
     dead: {
-      1:   { emoji: '🥚', name: 'Empty Eggshell' },
-      5:   { emoji: '🦴', name: 'Dry Bone' },
-      10:  { emoji: '🪨', name: 'Fossil Stone' },
-      15:  { emoji: '🪤', name: 'Empty Trap' },
-      100: { emoji: '💀', name: 'Skull' }
+      1:   { emoji: '🪹', name: 'Empty Nest' },
+      5:   { emoji: '🕸️', name: 'Spiderweb' },
+      10:  { emoji: '🦴', name: 'Dry Bone' },
+      15:  { emoji: '🪤', name: 'Rusted Trap' },
+      100: { emoji: '💀', name: 'Beast Skull' }
     },
-    labels: { 1: 'Baby', 5: 'Small Animal', 10: 'Wild Beast', 15: 'Apex Predator', 100: 'Mythic' }
+    labels: { 1: 'Baby', 5: 'Small Critter', 10: 'Savannah', 15: 'Apex Giant', 100: 'Mythic' }
   },
 
   aquarium: {
     name: 'Ocean World', subtext: 'Dive deeper with every check-in!',
     icon: '🐬', themeClass: 'theme-aquarium',
     tiers: {
-      1:   ['🫧', '🦐', '🐚'],                    // tiny bubble / shrimp
-      5:   ['🐟', '🦀', '🦞', '🐌'],              // small reef fish
-      10:  ['🐢', '🐙', '🦑', '🐡', '🐠'],        // medium sea creature
-      15:  ['🐬', '🦭', '🪼', '🦈'],              // large ocean animal
-      100: ['🐋', '🔱', '🧜‍♀️', '🌊']            // legendary
+      1:   ['🫧', '🐚', '🦪'],                          // bubble, tiny shell, oyster
+      5:   ['🪸', '🪼', '🌿', '🌾'],                    // coral reef, jellyfish, seaweed
+      10:  ['🐟', '🐠', '🐡', '🦐', '🦀', '🦑'],        // reef fish, puffer, shrimp, crab, squid
+      15:  ['🐬', '🦈', '🐋', '🐳', '🦭', '🐢', '🐙'],  // dolphin, shark, whale, seal, sea turtle, octopus
+      100: ['🔱', '🧜‍♀️', '🧜‍♂️', '🌊', '🏝️', '👑']        // Poseidon trident, merfolk, tidal wave, island
     },
     dead: {
-      1:   { emoji: '💧', name: 'Popped Bubble' },
-      5:   { emoji: '🪸', name: 'Bleached Coral' },
-      10:  { emoji: '🦴', name: 'Fish Bones' },
+      1:   { emoji: '💧', name: 'Popped Drop' },
+      5:   { emoji: '🦴', name: 'Fish Bone' },
+      10:  { emoji: '🥫', name: 'Rust Can' },
       15:  { emoji: '⚓', name: 'Rusted Anchor' },
       100: { emoji: '🚢', name: 'Shipwreck' }
     },
-    labels: { 1: 'Bubble', 5: 'Reef Fish', 10: 'Sea Creature', 15: 'Ocean Animal', 100: 'Leviathan' }
+    labels: { 1: 'Bubble', 5: 'Coral Reef', 10: 'School of Fish', 15: 'Ocean Giant', 100: 'Atlantis' }
   },
 
   candy: {
     name: 'Candy Land', subtext: 'Sweet rewards for sweet streaks!',
     icon: '🍭', themeClass: 'theme-candy',
     tiers: {
-      1:   ['🍭'],                                 // lollipop
-      5:   ['🍫', '🍬', '🍪', '🍮'],              // chocolate / candy
-      10:  ['🍩', '🥞', '🧇', '🧁'],              // donut / pancake
-      15:  ['🎂', '🍨', '🍧'],                    // cake / ice cream
-      100: ['🏰', '👑', '💎', '🌟']               // candy castle
+      1:   ['🍬', '🍭', '🍡'],                          // wrapped candy, lollipop, dango
+      5:   ['🍫', '🍪', '🍮', '🍯'],                    // chocolate bar, cookie, pudding, honey
+      10:  ['🍩', '🥞', '🧇', '🧁', '🥧'],              // donut, pancake, waffle, cupcake, pie
+      15:  ['🎂', '🍨', '🍧', '🍦'],                    // layer cake, sundae, shaved ice, soft serve
+      100: ['🏰', '👑', '💎', '🌟']                     // candy castle, sugar crown, candy gem
     },
     dead: {
       1:   { emoji: '🐜', name: 'Ant on Sugar' },
-      5:   { emoji: '🍪', name: 'Stale Crumb' },
-      10:  { emoji: '🧻', name: 'Empty Wrapper' },
-      15:  { emoji: '🦷', name: 'Cavity' },
-      100: { emoji: '📦', name: 'Moldy Box' }
+      5:   { emoji: '🪰', name: 'Fly on Food' },
+      10:  { emoji: '📦', name: 'Moldy Box' },
+      15:  { emoji: '🦷', name: 'Cavity Tooth' },
+      100: { emoji: '🗑️', name: 'Trash Bin' }
     },
-    labels: { 1: 'Lollipop', 5: 'Candy Bar', 10: 'Donut', 15: 'Cake', 100: 'Castle' }
+    labels: { 1: 'Sweet Drop', 5: 'Snack & Cocoa', 10: 'Bakery', 15: 'Grand Feast', 100: 'Candy Castle' }
   }
 };
 
