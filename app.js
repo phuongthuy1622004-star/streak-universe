@@ -318,101 +318,50 @@ class StreakEngine {
 }
 
 // ==========================================================================
-// 4. FIREBASE REST SYNC (open rules, no auth — same pattern as deutschc12026)
-//    Data path: /users/{deviceId}/goals.json
-//    Device ID is stable per-browser (stored in localStorage)
-//    If RTDB is unavailable → silent fail, localStorage stays authoritative
+// 4. FIREBASE REST — pure fetch, no SDK, open rules
 // ==========================================================================
 class FirebaseSync {
   static DB_URL = 'https://streakapp-6eab3-default-rtdb.asia-southeast1.firebasedatabase.app';
+}
 
-  static _getDeviceId() {
-    let id = localStorage.getItem('streak_universe_device_id');
+// ==========================================================================
+// 5. APP STORAGE — Firebase RTDB only (no localStorage for goals)
+//    localStorage chỉ dùng cho: theme preference, device ID
+// ==========================================================================
+class AppStorage {
+  static KEY = 'streak_universe_device_id';
+
+  static getDeviceId() {
+    let id = localStorage.getItem(this.KEY);
     if (!id) {
       id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 8);
-      localStorage.setItem('streak_universe_device_id', id);
+      localStorage.setItem(this.KEY, id);
     }
     return id;
   }
 
   static _endpoint() {
-    return `${this.DB_URL}/users/${encodeURIComponent(this._getDeviceId())}/goals.json`;
+    return `${FirebaseSync.DB_URL}/users/${encodeURIComponent(this.getDeviceId())}/goals.json`;
   }
 
-  /**
-   * Union-merge local ↔ remote goals, persist to both.
-   * Returns merged array on success, throws on network/RTDB error.
-   */
-  static async sync(localGoals) {
-    const url = this._endpoint();
+  /** Load goals from Firebase RTDB */
+  static async loadGoals() {
+    const resp = await fetch(this._endpoint());
+    if (!resp.ok) throw new Error(`Load failed: ${resp.status}`);
+    const raw = await resp.json();
+    if (!raw) return [];
+    return Array.isArray(raw) ? raw.filter(Boolean) : Object.values(raw).filter(Boolean);
+  }
 
-    // 1. Fetch remote
-    const getResp = await fetch(url, { method: 'GET' });
-    if (!getResp.ok) throw new Error(`RTDB GET ${getResp.status} ${getResp.statusText}`);
-
-    const remoteRaw = await getResp.json();
-    let remoteGoals = [];
-    if (remoteRaw) {
-      remoteGoals = Array.isArray(remoteRaw)
-        ? remoteRaw.filter(Boolean)
-        : Object.values(remoteRaw).filter(Boolean);
-    }
-
-    // 2. Union merge
-    const map = new Map();
-    localGoals.forEach(g => map.set(g.id, { ...g }));
-    remoteGoals.forEach(rg => {
-      if (!rg?.id) return;
-      if (!map.has(rg.id)) {
-        map.set(rg.id, rg);
-      } else {
-        const lg = map.get(rg.id);
-        const combined = [...new Set([...(lg.streak_dates ?? []), ...(rg.streak_dates ?? [])])].sort();
-        const healed = StreakEngine.recalculateStreakFromDates(combined);
-        map.set(rg.id, { ...rg, ...lg, streak: healed, streak_dates: combined });
-      }
-    });
-
-    const merged = [...map.values()];
-
-    // 3. Push merged back
-    const putResp = await fetch(url, {
+  /** Save goals to Firebase RTDB */
+  static async saveGoals(goals) {
+    const resp = await fetch(this._endpoint(), {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(merged)
+      body: JSON.stringify(goals)
     });
-    if (!putResp.ok) throw new Error(`RTDB PUT ${putResp.status}`);
-
-    return merged;
-  }
-}
-
-// ==========================================================================
-// 5. APP STORAGE (localStorage + silent Firebase sync)
-// ==========================================================================
-class AppStorage {
-  static KEY = 'streak_universe_goals';
-
-  static getGoals() {
-    try { return JSON.parse(localStorage.getItem(this.KEY)) ?? []; }
-    catch { return []; }
-  }
-
-  static saveGoals(goals) {
-    try { localStorage.setItem(this.KEY, JSON.stringify(goals)); }
-    catch (e) { console.error('save error', e); }
-  }
-
-  /** Silent sync — never throws to caller */
-  static async syncSilently(goals) {
-    try {
-      const merged = await FirebaseSync.sync(goals);
-      this.saveGoals(merged);
-      return merged;
-    } catch (e) {
-      console.debug('Firebase sync notice:', e.message);
-      return null;
-    }
+    if (!resp.ok) throw new Error(`Save failed: ${resp.status}`);
+    return goals;
   }
 }
 
@@ -591,26 +540,52 @@ class AppController {
   // INIT
   // =========================================================================
   loadInitialData() {
-    // Apply theme immediately (also applied inline in HTML head, but reinforce here)
+    // Apply theme immediately
     const savedTheme = localStorage.getItem('streak_universe_theme') || 'light';
     this.applyTheme(savedTheme);
 
-    this.goals = AppStorage.getGoals();
-    if (this.goals.length === 0) {
-      this.goals = this.defaultGoals();
-      AppStorage.saveGoals(this.goals);
-    }
+    // Show loading state
+    this.goalsContainer.innerHTML = `
+      <div class="col-span-2 py-16 text-center text-slate-400">
+        <div class="text-3xl mb-2 animate-bounce">🔥</div>
+        <p class="text-xs">Loading your goals...</p>
+      </div>`;
+    this.emptyState.classList.add('hidden');
 
-    // Passive expiration
-    const today = new Date();
-    this.goals.forEach(g => StreakEngine.checkPassiveExpiration(g, today));
-    AppStorage.saveGoals(this.goals);
-
-    this.renderStats();
-    this.renderGoals();
-
-    // Background Firebase sync
-    this._cloudSync();
+    // Load from Firebase
+    AppStorage.loadGoals()
+      .then(goals => {
+        this.goals = goals;
+        // Seed defaults for brand new user
+        if (!this.goals.length) {
+          this.goals = this.defaultGoals();
+          return AppStorage.saveGoals(this.goals);
+        }
+      })
+      .then(() => {
+        // Passive expiration check
+        const today = new Date();
+        let changed = false;
+        this.goals.forEach(g => {
+          const prev = g.streak?.current_streak;
+          StreakEngine.checkPassiveExpiration(g, today);
+          if (g.streak?.current_streak !== prev) changed = true;
+        });
+        if (changed) return AppStorage.saveGoals(this.goals);
+      })
+      .then(() => {
+        this.renderStats();
+        this.renderGoals();
+      })
+      .catch(err => {
+        console.warn('Load error:', err.message);
+        this.goalsContainer.innerHTML = `
+          <div class="col-span-2 py-16 text-center text-slate-400">
+            <div class="text-3xl mb-2">⚠️</div>
+            <p class="text-xs font-semibold text-rose-500">Cannot connect to database</p>
+            <p class="text-[10px] mt-1">Check your internet connection and Firebase rules.</p>
+          </div>`;
+      });
   }
 
   defaultGoals() {
@@ -768,10 +743,9 @@ class AppController {
       if (typeof confetti === 'function')
         confetti({ particleCount: 55, spread: 65, origin: { y: 0.8 }, colors: ['#f59e0b','#ec4899','#6366f1','#10b981'] });
 
-      AppStorage.saveGoals(this.goals);
       this.renderStats();
       this.renderGoals();
-      this._cloudSync();
+      AppStorage.saveGoals(this.goals).catch(e => this.showToast('⚠️ Save failed: ' + e.message));
 
       if (res.graceApplied) this.showToast('🛡️ Grace period! Streak protected.');
     } else {
@@ -855,11 +829,11 @@ class AppController {
       this.showToast('Goal created! Tap Check-in 🔥');
     }
 
-    AppStorage.saveGoals(this.goals);
-    this.closeGoalModal();
-    this.renderStats();
-    this.renderGoals();
-    this._cloudSync();
+    AppStorage.saveGoals(this.goals).then(() => {
+      this.closeGoalModal();
+      this.renderStats();
+      this.renderGoals();
+    }).catch(e => this.showToast('⚠️ Save failed: ' + e.message));
   }
 
   openEditGoal(id) {
@@ -872,11 +846,11 @@ class AppController {
     if (!g) return;
     if (confirm(`Delete "${g.title}"?`)) {
       this.goals = this.goals.filter(g => g.id !== id);
-      AppStorage.saveGoals(this.goals);
-      this.renderStats();
-      this.renderGoals();
-      this._cloudSync();
-      this.showToast('Deleted 🗑️');
+      AppStorage.saveGoals(this.goals).then(() => {
+        this.renderStats();
+        this.renderGoals();
+        this.showToast('Deleted 🗑️');
+      }).catch(e => this.showToast('⚠️ Delete failed: ' + e.message));
     }
   }
 
@@ -965,27 +939,18 @@ class AppController {
     const goal = this.goals.find(g => g.id === this.currentWorldGoalId);
     if (!goal) return;
     goal.streak = StreakEngine.recalculateStreakFromDates(goal.streak_dates ?? []);
-    AppStorage.saveGoals(this.goals);
-    this.openWorldModal(this.currentWorldGoalId);
-    this.renderStats(); this.renderGoals();
-    this.showToast('✨ Streak recalculated from history!');
+    AppStorage.saveGoals(this.goals).then(() => {
+      this.openWorldModal(this.currentWorldGoalId);
+      this.renderStats();
+      this.renderGoals();
+      this.showToast('✨ Streak recalculated from history!');
+    }).catch(e => this.showToast('⚠️ Save failed: ' + e.message));
   }
 
   // =========================================================================
-  // FIREBASE SYNC (silent)
+  // FIREBASE SYNC (no-op — AppStorage.saveGoals writes directly to Firebase)
   // =========================================================================
-  async _cloudSync() {
-    const merged = await AppStorage.syncSilently(this.goals);
-    if (merged) {
-      this.goals = merged;
-      // Passive expiration after merge
-      const today = new Date();
-      this.goals.forEach(g => StreakEngine.checkPassiveExpiration(g, today));
-      AppStorage.saveGoals(this.goals);
-      this.renderStats();
-      this.renderGoals();
-    }
-  }
+  _cloudSync() { /* data already saved to Firebase via AppStorage.saveGoals */ }
 
   // =========================================================================
   // HELPERS
