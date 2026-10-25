@@ -1,4 +1,4 @@
-const APP_VERSION = '4';
+const APP_VERSION = '5';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -547,12 +547,19 @@ class AppController {
     this.emptyState.classList.add('hidden');
 
     const CATS = {
-      study:   { label:'Study',   cls:'bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/30' },
-      health:  { label:'Health',  cls:'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30' },
-      work:    { label:'Work',    cls:'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/30' },
-      mind:    { label:'Wellness',cls:'bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/30' },
-      finance: { label:'Finance', cls:'bg-teal-50 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-500/30' },
-      other:   { label:'Other',   cls:'bg-slate-100 dark:bg-slate-500/20 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-500/30' }
+      study:   { label:'Study',   cls:'bg-blue-100 text-blue-800 border-blue-200' },
+      health:  { label:'Health',  cls:'bg-emerald-100 text-emerald-800 border-emerald-200' },
+      work:    { label:'Work',    cls:'bg-purple-100 text-purple-800 border-purple-200' },
+      mind:    { label:'Wellness',cls:'bg-amber-100 text-amber-800 border-amber-200' },
+      finance: { label:'Finance', cls:'bg-teal-100 text-teal-800 border-teal-200' },
+      other:   { label:'Other',   cls:'bg-pink-100 text-pink-800 border-pink-200' }
+    };
+
+    const THEME_ICON_CLS = {
+      garden:   'bg-emerald-100/90 border-emerald-200 text-emerald-800',
+      zoo:      'bg-amber-100/90 border-amber-200 text-amber-800',
+      aquarium: 'bg-sky-100/90 border-sky-200 text-sky-800',
+      candy:    'bg-pink-100/90 border-pink-200 text-pink-800'
     };
 
     this.goalsContainer.innerHTML = list.map(goal => {
@@ -564,13 +571,15 @@ class AppController {
       const cat  = CATS[goal.category] ?? CATS.other;
       const ts   = goal.target_streak || 30;
       const prog = Math.min(100, Math.round(cur / ts * 100));
+      const themeClass = 'card-theme-' + (goal.theme || 'garden');
+      const iconCls = THEME_ICON_CLS[goal.theme] || THEME_ICON_CLS.garden;
 
       let dlBadge = '';
       if (goal.deadline) {
         const diff = StreakEngine.diffDays(new Date(), StreakEngine.parseDate(goal.deadline));
-        if (diff < 0)      dlBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 font-semibold">Overdue</span>`;
-        else if (diff===0) dlBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 font-semibold">Due Today!</span>`;
-        else               dlBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 font-semibold">${diff}d left</span>`;
+        if (diff < 0)      dlBadge = `<span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-300 font-bold">Overdue</span>`;
+        else if (diff===0) dlBadge = `<span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 font-bold">Due Today!</span>`;
+        else               dlBadge = `<span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold">${diff}d left</span>`;
       }
 
       const targetTxt = goal.daily_target
@@ -578,48 +587,52 @@ class AppController {
         : `<strong>Daily:</strong> Tick ✓`;
 
       return `
-        <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col gap-3 transition-all hover:border-slate-300 dark:hover:border-slate-600/80 group">
+        <div class="${themeClass} rounded-2xl p-4 sm:p-5 flex flex-col gap-3 transition-all duration-200 group">
           <div class="flex items-start justify-between gap-2">
             <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-xl p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 shadow-sm">${icon}</span>
-              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full border ${cat.cls}">${cat.label}</span>
+              <span class="text-xl p-1.5 rounded-xl border shadow-sm ${iconCls}">${icon}</span>
+              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${cat.cls}">${cat.label}</span>
               ${dlBadge}
             </div>
             <div class="flex gap-1 shrink-0">
-              <button onclick="app.openEditGoal('${goal.id}')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-xs transition">✏️</button>
-              <button onclick="app.deleteGoal('${goal.id}')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-xs transition">🗑️</button>
+              <button onclick="app.openEditGoal('${goal.id}')" title="Edit goal" class="w-7 h-7 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white/80 flex items-center justify-center text-xs transition">✏️</button>
+              <button onclick="app.deleteGoal('${goal.id}')" title="Delete goal" class="w-7 h-7 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-white/80 flex items-center justify-center text-xs transition">🗑️</button>
             </div>
           </div>
 
           <div>
-            <h3 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">${this.esc(goal.title)}</h3>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${targetTxt}</p>
-            <div class="mt-2">
-              <div class="flex justify-between text-[10px] text-slate-400 mb-0.5">
-                <span>Goal: ${ts}d</span><span>${prog}%</span>
+            <h3 class="text-base font-extrabold text-slate-800 tracking-tight leading-snug">${this.esc(goal.title)}</h3>
+            <p class="text-xs text-slate-600 font-medium mt-1">${targetTxt}</p>
+            <div class="mt-2.5">
+              <div class="flex justify-between items-center text-[11px] mb-1">
+                ${prog >= 100 
+                  ? `<span class="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300">🏆 Milestone Achieved!</span>`
+                  : `<span class="text-slate-600 font-semibold">Goal: ${ts}d</span>`
+                }
+                <span class="font-bold text-indigo-600">${prog}%</span>
               </div>
-              <div class="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-indigo-500 to-rose-500 rounded-full" style="width:${prog}%"></div>
+              <div class="h-2 bg-slate-200/80 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-500 rounded-full transition-all" style="width:${prog}%"></div>
               </div>
             </div>
           </div>
 
-          <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80">
-            <div class="flex items-center gap-2">
-              <div class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-slate-900 border border-amber-300 dark:border-amber-500/40 flex items-center justify-center ${cur > 0 ? 'flame-glow' : 'opacity-50'}">🔥</div>
+          <div class="flex items-center justify-between pt-2.5 border-t border-slate-200/60">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-xl bg-amber-100/90 border border-amber-300 flex items-center justify-center text-lg ${cur > 0 ? 'flame-glow' : 'opacity-60'}">🔥</div>
               <div>
-                <div class="text-sm font-black text-amber-500">${cur} <span class="text-[10px] font-medium text-slate-500">days</span></div>
-                <div class="text-[10px] text-slate-400">Best: <strong class="text-rose-500">${lng}</strong></div>
+                <div class="text-base font-black text-amber-700 leading-tight">${cur} <span class="text-[11px] font-bold text-slate-500">days</span></div>
+                <div class="text-[10px] text-slate-500 font-medium">Best: <strong class="text-rose-600 font-bold">${lng}</strong></div>
               </div>
             </div>
-            <div class="flex gap-2">
-              <button onclick="app.openWorldModal('${goal.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 flex items-center gap-1 transition hover:bg-slate-200">
-                ${icon} <span>World</span>
+            <div class="flex items-center gap-2">
+              <button onclick="app.openWorldModal('${goal.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-white text-slate-700 border border-slate-200/90 shadow-sm flex items-center gap-1.5 transition active:scale-95">
+                <span>${icon}</span> <span>World</span>
               </button>
-              <button onclick="app.toggleCheckIn('${goal.id}')" class="streak-check-btn px-3 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
+              <button onclick="app.toggleCheckIn('${goal.id}')" title="${done ? 'Click to undo' : 'Check-in today'}" class="streak-check-btn px-3.5 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm active:scale-95 ${
                 done
-                  ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-600'
-                  : 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-md shadow-amber-500/25 active:scale-95'
+                  ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-300 hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300'
+                  : 'bg-gradient-to-r from-amber-500 via-rose-500 to-pink-500 hover:opacity-95 text-white shadow-rose-500/25'
               }">
                 ${done ? '✓ Done' : 'Check-in 🔥'}
               </button>

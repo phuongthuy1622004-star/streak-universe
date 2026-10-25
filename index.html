@@ -28,7 +28,7 @@
         <div>
           <div class="flex items-center gap-1.5">
             <h1 class="text-sm font-black tracking-tight bg-gradient-to-r from-amber-600 via-rose-600 to-indigo-600 bg-clip-text text-transparent">STREAK UNIVERSE</h1>
-            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-indigo-600 leading-none">v4</span>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-indigo-600 leading-none">v5</span>
           </div>
           <p class="text-[10px] text-slate-400 font-medium">Habits & Gamified Worlds</p>
         </div>
@@ -46,21 +46,21 @@
 
     <!-- STATS -->
     <section class="grid grid-cols-4 gap-2 sm:gap-3">
-      <div class="glass-card rounded-2xl p-3 flex flex-col items-center border-b-2 border-amber-400">
-        <span class="text-xl font-black text-amber-500" id="statActiveStreaks">0</span>
-        <span class="text-[10px] text-slate-500 font-medium mt-0.5">Active 🔥</span>
+      <div class="rounded-2xl p-3 flex flex-col items-center bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 shadow-sm">
+        <span class="text-xl font-black text-amber-600" id="statActiveStreaks">0</span>
+        <span class="text-[10px] text-amber-900 font-bold mt-0.5">Active 🔥</span>
       </div>
-      <div class="glass-card rounded-2xl p-3 flex flex-col items-center border-b-2 border-rose-400">
-        <span class="text-xl font-black text-rose-500" id="statBestStreak">0</span>
-        <span class="text-[10px] text-slate-500 font-medium mt-0.5">Best 🏆</span>
+      <div class="rounded-2xl p-3 flex flex-col items-center bg-gradient-to-br from-rose-50 to-pink-50 border-2 border-rose-200 shadow-sm">
+        <span class="text-xl font-black text-rose-600" id="statBestStreak">0</span>
+        <span class="text-[10px] text-rose-900 font-bold mt-0.5">Best 🏆</span>
       </div>
-      <div class="glass-card rounded-2xl p-3 flex flex-col items-center border-b-2 border-indigo-400">
-        <span class="text-xl font-black text-indigo-600 dark:text-indigo-400" id="statTotalDays">0</span>
-        <span class="text-[10px] text-slate-500 font-medium mt-0.5">Total 📅</span>
+      <div class="rounded-2xl p-3 flex flex-col items-center bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 shadow-sm">
+        <span class="text-xl font-black text-indigo-600" id="statTotalDays">0</span>
+        <span class="text-[10px] text-indigo-900 font-bold mt-0.5">Total 📅</span>
       </div>
-      <div class="glass-card rounded-2xl p-3 flex flex-col items-center border-b-2 border-emerald-400">
-        <span class="text-xl font-black text-emerald-600 dark:text-emerald-400" id="statTodayRate">0%</span>
-        <span class="text-[10px] text-slate-500 font-medium mt-0.5">Today ✨</span>
+      <div class="rounded-2xl p-3 flex flex-col items-center bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 shadow-sm">
+        <span class="text-xl font-black text-emerald-600" id="statTodayRate">0%</span>
+        <span class="text-[10px] text-emerald-900 font-bold mt-0.5">Today ✨</span>
       </div>
     </section>
 
@@ -78,7 +78,7 @@
 
   <!-- FOOTER -->
   <footer class="py-4 text-center text-[10px] text-slate-400">
-    Streak Universe • <span class="font-semibold text-slate-500">v4</span>
+    Streak Universe • <span class="font-semibold text-slate-500">v5</span>
   </footer>
 
   <!-- ============================================================
@@ -87,9 +87,9 @@
   <div id="goalModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
     <div class="glass-modal w-full sm:max-w-lg max-h-[90vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 transform translate-y-8 transition-transform duration-200" id="goalModalBox">
       
-      <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h3 id="goalModalTitle" class="text-base font-black text-slate-900 dark:text-slate-100">🎯 New Goal</h3>
-        <button id="btnCloseGoalModal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center">✕</button>
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 id="goalModalTitle" class="text-base font-black text-slate-800">🎯 New Goal</h3>
+        <button id="btnCloseGoalModal" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center">✕</button>
       </div>
 
       <form id="goalForm" class="p-5 space-y-3.5 overflow-y-auto flex-1 text-sm">
@@ -97,15 +97,15 @@
 
         <!-- Title -->
         <div>
-          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Title *</label>
-          <input type="text" id="formGoalTitle" required placeholder="e.g., Morning Run, Read 20 pages..." class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50" />
+          <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Title *</label>
+          <input type="text" id="formGoalTitle" required placeholder="e.g., Morning Run, Read 20 pages..." class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50" />
         </div>
 
         <!-- Category + Cadence -->
         <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Category</label>
-            <select id="formGoalCategory" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/50">
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Category</label>
+            <select id="formGoalCategory" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 font-medium focus:ring-2 focus:ring-indigo-500/50">
               <option value="study">📚 Study</option>
               <option value="health">🏃 Health</option>
               <option value="work">💼 Work</option>
@@ -115,8 +115,8 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Daily Target</label>
-            <select id="formTargetMode" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/50">
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Daily Target</label>
+            <select id="formTargetMode" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 font-medium focus:ring-2 focus:ring-indigo-500/50">
               <option value="tick">Just Tick ✓</option>
               <option value="custom">Amount (30 mins...)</option>
             </select>
@@ -125,16 +125,16 @@
 
         <!-- Custom amount (shows when "Amount" selected) -->
         <div id="customTargetInputContainer" class="hidden">
-          <input type="text" id="formDailyTarget" placeholder="e.g., 30 mins, 5 km, 10 pages" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-xs focus:ring-2 focus:ring-indigo-500/50" />
+          <input type="text" id="formDailyTarget" placeholder="e.g., 30 mins, 5 km, 10 pages" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 font-medium placeholder-slate-400 text-xs focus:ring-2 focus:ring-indigo-500/50" />
         </div>
 
         <!-- Milestone + Deadline -->
         <div class="grid grid-cols-2 gap-2.5">
           <div>
             <div class="flex items-center h-5 mb-1">
-              <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Milestone</label>
+              <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Milestone</label>
             </div>
-            <select id="formTargetStreak" class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-indigo-500/50 box-border">
+            <select id="formTargetStreak" class="w-full h-10 px-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 font-medium text-xs focus:ring-2 focus:ring-indigo-500/50 box-border">
               <option value="7">7 days</option>
               <option value="21">21 days</option>
               <option value="30" selected>30 days</option>
@@ -145,44 +145,44 @@
           </div>
           <div>
             <div class="flex items-center justify-between h-5 mb-1">
-              <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Deadline</label>
-              <button type="button" id="btnAutoDeadline" class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:opacity-80">⚡ Auto</button>
+              <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Deadline</label>
+              <button type="button" id="btnAutoDeadline" class="text-[10px] font-bold text-indigo-600 hover:opacity-80">⚡ Auto</button>
             </div>
-            <input type="date" id="formDeadline" class="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-indigo-500/50 box-border" />
+            <input type="date" id="formDeadline" class="w-full h-10 px-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 font-medium text-xs focus:ring-2 focus:ring-indigo-500/50 box-border" />
           </div>
         </div>
 
         <!-- Theme -->
         <div>
-          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">🎨 World Theme</label>
+          <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">🎨 World Theme</label>
           <div class="grid grid-cols-4 gap-2" id="themeRadioGroup">
-            <label class="theme-choice flex flex-col items-center p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-emerald-500 cursor-pointer">
+            <label class="theme-choice flex flex-col items-center p-2 rounded-xl border-2 border-emerald-200 bg-emerald-50/60 hover:border-emerald-500 cursor-pointer transition">
               <input type="radio" name="goalTheme" value="garden" class="hidden" checked />
-              <span class="text-xl">🌱</span>
-              <span class="text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">Garden</span>
+              <span class="text-2xl">🌱</span>
+              <span class="text-[10px] font-bold text-emerald-900 mt-1">Garden</span>
             </label>
-            <label class="theme-choice flex flex-col items-center p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-amber-500 cursor-pointer">
+            <label class="theme-choice flex flex-col items-center p-2 rounded-xl border-2 border-amber-200 bg-amber-50/60 hover:border-amber-500 cursor-pointer transition">
               <input type="radio" name="goalTheme" value="zoo" class="hidden" />
-              <span class="text-xl">🦁</span>
-              <span class="text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">Zoo</span>
+              <span class="text-2xl">🦁</span>
+              <span class="text-[10px] font-bold text-amber-900 mt-1">Zoo</span>
             </label>
-            <label class="theme-choice flex flex-col items-center p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-cyan-500 cursor-pointer">
+            <label class="theme-choice flex flex-col items-center p-2 rounded-xl border-2 border-sky-200 bg-sky-50/60 hover:border-sky-500 cursor-pointer transition">
               <input type="radio" name="goalTheme" value="aquarium" class="hidden" />
-              <span class="text-xl">🐬</span>
-              <span class="text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">Ocean</span>
+              <span class="text-2xl">🐬</span>
+              <span class="text-[10px] font-bold text-sky-900 mt-1">Ocean</span>
             </label>
-            <label class="theme-choice flex flex-col items-center p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-pink-500 cursor-pointer">
+            <label class="theme-choice flex flex-col items-center p-2 rounded-xl border-2 border-pink-200 bg-pink-50/60 hover:border-pink-500 cursor-pointer transition">
               <input type="radio" name="goalTheme" value="candy" class="hidden" />
-              <span class="text-xl">🍭</span>
-              <span class="text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">Candy</span>
+              <span class="text-2xl">🍭</span>
+              <span class="text-[10px] font-bold text-pink-900 mt-1">Candy</span>
             </label>
           </div>
         </div>
 
         <!-- Actions -->
-        <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex gap-2 justify-end">
-          <button type="button" id="btnCancelGoalModal" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold text-sm">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-rose-600 text-white font-bold text-sm shadow-lg">Save</button>
+        <div class="pt-2 border-t border-slate-100 flex gap-2 justify-end">
+          <button type="button" id="btnCancelGoalModal" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold text-sm">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-rose-600 text-white font-bold text-sm shadow-md shadow-indigo-500/25 active:scale-95">Save</button>
         </div>
       </form>
     </div>
@@ -203,24 +203,24 @@
             <p id="worldThemeSubtext" class="text-[11px] font-semibold opacity-70">Magic Garden</p>
           </div>
         </div>
-        <button id="btnCloseWorldModal" class="w-8 h-8 rounded-full bg-black/10 dark:bg-black/40 flex items-center justify-center text-sm">✕</button>
+        <button id="btnCloseWorldModal" class="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center text-sm">✕</button>
       </div>
 
       <!-- Stats Strip -->
-      <div class="bg-slate-50 dark:bg-slate-900/90 px-5 py-2.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-around text-center">
+      <div class="bg-slate-50 px-5 py-2.5 border-b border-slate-200 flex items-center justify-around text-center">
         <div>
           <p class="text-[10px] text-slate-500 uppercase font-bold">Streak</p>
-          <p id="worldCurrentStreak" class="text-lg font-black text-amber-500">0 days</p>
+          <p id="worldCurrentStreak" class="text-lg font-black text-amber-600">0 days</p>
         </div>
-        <div class="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
+        <div class="h-6 w-px bg-slate-200"></div>
         <div>
           <p class="text-[10px] text-slate-500 uppercase font-bold">Best</p>
-          <p id="worldLongestStreak" class="text-lg font-black text-rose-500">0 days</p>
+          <p id="worldLongestStreak" class="text-lg font-black text-rose-600">0 days</p>
         </div>
-        <div class="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
+        <div class="h-6 w-px bg-slate-200"></div>
         <div>
           <p class="text-[10px] text-slate-500 uppercase font-bold">Grace</p>
-          <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400">1-Day 🛡️</p>
+          <p class="text-xs font-bold text-emerald-600">1-Day 🛡️</p>
         </div>
       </div>
 
@@ -229,30 +229,30 @@
         <div id="worldSlotsGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2"></div>
 
         <!-- Slot detail -->
-        <div id="slotDetailBox" class="hidden glass-card rounded-2xl p-3 border border-indigo-200 dark:border-indigo-500/40 flex items-center justify-between text-xs">
+        <div id="slotDetailBox" class="hidden rounded-2xl p-3 bg-indigo-50/70 border border-indigo-200 flex items-center justify-between text-xs">
           <div class="flex items-center gap-2.5">
             <span id="slotDetailEmoji" class="text-3xl">🌱</span>
             <div>
-              <p id="slotDetailTitle" class="font-bold text-slate-800 dark:text-slate-200">Sprout</p>
-              <p id="slotDetailDesc" class="text-slate-500 text-[11px]">Completed on ...</p>
+              <p id="slotDetailTitle" class="font-bold text-slate-800">Sprout</p>
+              <p id="slotDetailDesc" class="text-slate-600 text-[11px]">Completed on ...</p>
             </div>
           </div>
-          <button onclick="document.getElementById('slotDetailBox').classList.add('hidden')" class="text-slate-400 text-xs px-2">✕</button>
+          <button onclick="document.getElementById('slotDetailBox').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 text-xs px-2">✕</button>
         </div>
 
         <!-- Legend -->
-        <div class="bg-slate-50 dark:bg-slate-900/60 rounded-2xl p-3 border border-slate-200 dark:border-slate-800">
-          <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-2">Tiers</p>
+        <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200">
+          <p class="text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-2">Tiers</p>
           <div id="worldLegendContent" class="grid grid-cols-5 gap-1.5 text-xs"></div>
         </div>
       </div>
 
       <!-- Footer -->
-      <div class="px-4 py-3 bg-slate-50 dark:bg-slate-900/90 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-        <button id="btnSelfHealStreak" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold text-xs border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
+      <div class="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+        <button id="btnSelfHealStreak" class="px-3 py-2 rounded-xl bg-white text-slate-700 font-semibold text-xs border border-slate-200 shadow-sm hover:bg-slate-100 flex items-center gap-1.5">
           🩺 Self-Heal
         </button>
-        <button id="btnWorldDone" class="px-5 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs">Done</button>
+        <button id="btnWorldDone" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md">Done</button>
       </div>
     </div>
   </div>
@@ -272,6 +272,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>
