@@ -1,4 +1,4 @@
-const APP_VERSION = '6';
+const APP_VERSION = '7';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -406,7 +406,6 @@ class AppController {
     this.slotDetailDesc    = document.getElementById('slotDetailDesc');
     this.btnCloseWorld     = document.getElementById('btnCloseWorldModal');
     this.btnWorldDone      = document.getElementById('btnWorldDone');
-    this.btnSelfHeal       = document.getElementById('btnSelfHealStreak');
 
     // PWA
     this.pwaInstallBanner = document.getElementById('pwaInstallBanner');
@@ -447,7 +446,6 @@ class AppController {
     // World modal
     this.btnCloseWorld.addEventListener('click', () => this.closeWorldModal());
     this.btnWorldDone.addEventListener('click',  () => this.closeWorldModal());
-    this.btnSelfHeal.addEventListener('click',   () => this.handleSelfHeal());
 
     // PWA
     window.addEventListener('beforeinstallprompt', e => {
@@ -861,19 +859,6 @@ class AppController {
     this.worldModal.classList.add('opacity-0', 'pointer-events-none');
     this.worldModalBox.classList.add('translate-y-8');
     this.currentWorldGoalId = null;
-  }
-
-  handleSelfHeal() {
-    if (!this.currentWorldGoalId) return;
-    const goal = this.goals.find(g => g.id === this.currentWorldGoalId);
-    if (!goal) return;
-    goal.streak = StreakEngine.recalculateStreakFromDates(goal.streak_dates ?? []);
-    AppStorage.saveGoals(this.goals).then(() => {
-      this.openWorldModal(this.currentWorldGoalId);
-      this.renderStats();
-      this.renderGoals();
-      this.showToast('✨ Streak recalculated from history!');
-    }).catch(e => this.showToast('⚠️ Save failed: ' + e.message));
   }
 
   // =========================================================================
