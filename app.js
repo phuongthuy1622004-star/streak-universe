@@ -540,6 +540,11 @@ class AppController {
   // INIT
   // =========================================================================
   loadInitialData() {
+    // Clear legacy localStorage cache
+    try {
+      localStorage.removeItem('streak_universe_goals');
+    } catch (e) {}
+
     // Apply theme immediately
     const savedTheme = localStorage.getItem('streak_universe_theme') || 'light';
     this.applyTheme(savedTheme);
@@ -552,11 +557,24 @@ class AppController {
       </div>`;
     this.emptyState.classList.add('hidden');
 
+    // Sample IDs to purge
+    const sampleIds = ['goal_deutsch', 'goal_running', 'goal_reading', 'goal_deutsch_c1'];
+
     // Load from Firebase
     AppStorage.loadGoals()
       .then(goals => {
-        this.goals = goals;
-        // No seeding — start completely empty for new users
+        const raw = Array.isArray(goals) ? goals : [];
+        // Filter out any leftover sample goals
+        this.goals = raw.filter(g => 
+          g && 
+          !sampleIds.includes(g.id) && 
+          !['German C1 Vocabulary', 'Morning 3km Run', 'Read 20 Pages Daily', 'German C1 & Vocabulary Practice'].includes(g.title)
+        );
+
+        // If sample goals existed in Firebase, clean them up permanently
+        if (this.goals.length !== raw.length) {
+          return AppStorage.saveGoals(this.goals);
+        }
       })
       .then(() => {
         // Passive expiration check
@@ -575,35 +593,10 @@ class AppController {
       })
       .catch(err => {
         console.warn('Load error:', err.message);
-        this.goalsContainer.innerHTML = `
-          <div class="col-span-2 py-16 text-center text-slate-400">
-            <div class="text-3xl mb-2">⚠️</div>
-            <p class="text-xs font-semibold text-rose-500">Cannot connect to database</p>
-            <p class="text-[10px] mt-1">Check your internet connection and Firebase rules.</p>
-          </div>`;
+        this.goals = [];
+        this.renderStats();
+        this.renderGoals();
       });
-  }
-
-  defaultGoals() {
-    const t = new Date();
-    const d = (n) => { const x = new Date(t); x.setDate(x.getDate() - n); return StreakEngine.formatDate(x); };
-    return [
-      { id:'goal_deutsch', title:'German C1 Vocabulary', category:'study', daily_target:'30 mins',
-        deadline:'2026-12-31', target_streak:100, theme:'garden', custom_emoji:'',
-        created_at: d(3),
-        streak:{ current_streak:3, longest_streak:3, last_completed_date:d(1) },
-        streak_dates:[d(3), d(2), d(1)] },
-      { id:'goal_running', title:'Morning 3km Run', category:'health', daily_target:'',
-        deadline:'', target_streak:30, theme:'zoo', custom_emoji:'',
-        created_at: d(2),
-        streak:{ current_streak:2, longest_streak:2, last_completed_date:d(1) },
-        streak_dates:[d(2), d(1)] },
-      { id:'goal_reading', title:'Read 20 Pages Daily', category:'mind', daily_target:'20 pages',
-        deadline:'2026-11-30', target_streak:60, theme:'aquarium', custom_emoji:'',
-        created_at: d(1),
-        streak:{ current_streak:1, longest_streak:1, last_completed_date:d(1) },
-        streak_dates:[d(1)] }
-    ];
   }
 
   // =========================================================================
@@ -842,9 +835,9 @@ class AppController {
     if (!g) return;
     if (confirm(`Delete "${g.title}"?`)) {
       this.goals = this.goals.filter(g => g.id !== id);
+      this.renderStats();
+      this.renderGoals();
       AppStorage.saveGoals(this.goals).then(() => {
-        this.renderStats();
-        this.renderGoals();
         this.showToast('Deleted 🗑️');
       }).catch(e => this.showToast('⚠️ Delete failed: ' + e.message));
     }

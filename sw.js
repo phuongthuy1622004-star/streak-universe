@@ -1,4 +1,4 @@
-const CACHE_NAME = 'streak-universe-v1';
+const CACHE_NAME = 'streak-universe-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -10,13 +10,6 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS).catch((err) => {
-        console.warn('Cache pre-fetch warning:', err);
-      });
-    })
-  );
   self.skipWaiting();
 });
 
@@ -36,8 +29,24 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  const url = event.request.url;
+
   // Let Firebase RTDB REST calls pass through network directly
-  if (event.request.url.includes('firebaseio.com')) {
+  if (url.includes('firebaseio.com') || url.includes('firebasedatabase.app')) {
+    return;
+  }
+
+  // Network-first for app code so updates are immediate
+  if (url.includes('app.js') || url.includes('index.html') || url.endsWith('/streak-universe/')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((res) => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          return res;
+        })
+        .catch(() => caches.match(event.request))
+    );
     return;
   }
 
@@ -46,12 +55,7 @@ self.addEventListener('fetch', (event) => {
       if (cachedResponse) {
         return cachedResponse;
       }
-      return fetch(event.request).catch(() => {
-        // Fallback for html pages
-        if (event.request.headers.get('accept')?.includes('text/html')) {
-          return caches.match('./index.html');
-        }
-      });
+      return fetch(event.request);
     })
   );
 });
