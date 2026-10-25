@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Streak Universe - Habit & World Tracker</title>
   <meta name="description" content="Multi-goal streak tracking system with customizable gamification worlds: Garden, Zoo, Aquarium, and Candy Land!" />
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="theme-color" content="#f8fafc" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
   <link rel="apple-touch-icon" href="icons/icon.svg" />
@@ -39,35 +39,40 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white transition-colors duration-200">
 
   <!-- TOP HEADER -->
-  <header class="sticky top-0 z-30 glass-card border-b border-slate-800/80 px-4 py-3 sm:px-6">
+  <header class="sticky top-0 z-30 glass-card px-4 py-3 sm:px-6">
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
       <!-- App Brand -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-indigo-600 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20 animate-float">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-indigo-600 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20 animate-float text-white">
           🔥
         </div>
         <div>
-          <h1 class="text-base sm:text-lg font-black tracking-tight bg-gradient-to-r from-amber-400 via-rose-300 to-indigo-300 bg-clip-text text-transparent">
+          <h1 class="text-base sm:text-lg font-black tracking-tight bg-gradient-to-r from-amber-600 via-rose-600 to-indigo-600 bg-clip-text text-transparent">
             STREAK UNIVERSE
           </h1>
-          <p class="text-[11px] text-slate-400 font-medium">Habits & Gamified Worlds</p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Habits & Gamified Worlds</p>
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="flex items-center gap-2">
+        <!-- Light / Dark Mode Toggle Button -->
+        <button id="btnThemeToggle" title="Toggle Light / Dark mode" class="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition shadow-sm">
+          <span id="themeToggleIcon">☀️</span>
+        </button>
+
         <!-- Firebase Sync Status Badge -->
-        <button id="btnOpenFirebaseModal" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 transition shadow-sm">
-          <span id="syncStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <button id="btnOpenFirebaseModal" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition shadow-sm">
+          <span id="syncStatusDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span id="syncStatusText" class="hidden sm:inline">Firebase Sync</span>
           <span class="text-xs">☁️</span>
         </button>
 
         <!-- New Goal Button -->
-        <button id="btnOpenCreateGoal" class="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-bold bg-gradient-to-r from-indigo-500 to-rose-500 hover:from-indigo-600 hover:to-rose-600 text-white shadow-lg shadow-indigo-500/30 transition transform active:scale-95">
+        <button id="btnOpenCreateGoal" class="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-indigo-600 to-rose-600 hover:from-indigo-700 hover:to-rose-700 text-white shadow-lg shadow-indigo-500/25 transition transform active:scale-95">
           <span>+</span>
           <span class="hidden xs:inline">New Goal</span>
         </button>
@@ -82,34 +87,34 @@
     <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
       <!-- Stat 1: Active Streaks -->
       <div class="glass-card rounded-2xl p-4 flex flex-col items-center justify-center text-center border-l-4 border-amber-500">
-        <span class="text-2xl sm:text-3xl font-extrabold text-amber-400 flex items-center gap-1">
+        <span class="text-2xl sm:text-3xl font-extrabold text-amber-500 flex items-center gap-1">
           <span id="statActiveStreaks">0</span> 🔥
         </span>
-        <span class="text-xs text-slate-400 font-medium mt-1">Active Streaks</span>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Active Streaks</span>
       </div>
 
       <!-- Stat 2: Longest Streak -->
       <div class="glass-card rounded-2xl p-4 flex flex-col items-center justify-center text-center border-l-4 border-rose-500">
-        <span class="text-2xl sm:text-3xl font-extrabold text-rose-400 flex items-center gap-1">
+        <span class="text-2xl sm:text-3xl font-extrabold text-rose-500 flex items-center gap-1">
           <span id="statBestStreak">0</span> 🏆
         </span>
-        <span class="text-xs text-slate-400 font-medium mt-1">Best Record</span>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Best Record</span>
       </div>
 
       <!-- Stat 3: Total Completions -->
       <div class="glass-card rounded-2xl p-4 flex flex-col items-center justify-center text-center border-l-4 border-indigo-500">
-        <span class="text-2xl sm:text-3xl font-extrabold text-indigo-400 flex items-center gap-1">
+        <span class="text-2xl sm:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
           <span id="statTotalDays">0</span> 📅
         </span>
-        <span class="text-xs text-slate-400 font-medium mt-1">Total Days Logged</span>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Total Days Logged</span>
       </div>
 
       <!-- Stat 4: Today Progress -->
       <div class="glass-card rounded-2xl p-4 flex flex-col items-center justify-center text-center border-l-4 border-emerald-500">
-        <span class="text-2xl sm:text-3xl font-extrabold text-emerald-400 flex items-center gap-1">
+        <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
           <span id="statTodayRate">0%</span> ✨
         </span>
-        <span class="text-xs text-slate-400 font-medium mt-1">Today's Completion</span>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Today's Completion</span>
       </div>
     </section>
 
@@ -122,28 +127,28 @@
           type="text"
           id="searchInput"
           placeholder="Search goals, habits or notes..."
-          class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+          class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 shadow-sm"
         />
       </div>
 
       <!-- Category Filter Pills -->
       <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 text-xs font-semibold scrollbar-none" id="categoryFilterContainer">
-        <button data-cat="all" class="cat-pill active px-3 py-1.5 rounded-lg bg-indigo-600 text-white whitespace-nowrap shadow-sm">
+        <button data-cat="all" class="cat-pill active px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white whitespace-nowrap shadow-sm">
           All
         </button>
-        <button data-cat="study" class="cat-pill px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap">
+        <button data-cat="study" class="cat-pill px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 whitespace-nowrap shadow-sm">
           📚 Study
         </button>
-        <button data-cat="health" class="cat-pill px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap">
+        <button data-cat="health" class="cat-pill px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 whitespace-nowrap shadow-sm">
           🏃 Health
         </button>
-        <button data-cat="work" class="cat-pill px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap">
+        <button data-cat="work" class="cat-pill px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 whitespace-nowrap shadow-sm">
           💼 Work
         </button>
-        <button data-cat="mind" class="cat-pill px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap">
+        <button data-cat="mind" class="cat-pill px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 whitespace-nowrap shadow-sm">
           🧘 Wellness
         </button>
-        <button data-cat="other" class="cat-pill px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap">
+        <button data-cat="other" class="cat-pill px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 whitespace-nowrap shadow-sm">
           ✨ Other
         </button>
       </div>
@@ -156,10 +161,10 @@
       </div>
 
       <!-- Empty State -->
-      <div id="emptyState" class="hidden glass-card rounded-2xl p-8 sm:p-12 text-center max-w-md mx-auto my-6">
+      <div id="emptyState" class="hidden glass-card rounded-3xl p-8 sm:p-12 text-center max-w-md mx-auto my-6 border border-slate-200 dark:border-slate-800">
         <div class="text-6xl mb-4">🌱</div>
-        <h3 class="text-lg font-bold text-slate-200">No Streak Goals Yet</h3>
-        <p class="text-xs sm:text-sm text-slate-400 mt-2 mb-6 leading-relaxed">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">No Streak Goals Yet</h3>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 mb-6 leading-relaxed">
           Create your first goal to start growing your Magic Garden, Safari Zoo, Aquarium or Candy Kingdom!
         </p>
         <button onclick="document.getElementById('btnOpenCreateGoal').click()" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition">
@@ -172,14 +177,14 @@
   <!-- ======================================================================
        MODAL 1: ADD / EDIT GOAL
        ====================================================================== -->
-  <div id="goalModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/75 p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
-    <div class="glass-modal w-full sm:max-w-xl max-h-[90vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-700 transform translate-y-8 transition-transform duration-200" id="goalModalBox">
+  <div id="goalModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+    <div class="glass-modal w-full sm:max-w-xl max-h-[90vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 transform translate-y-8 transition-transform duration-200" id="goalModalBox">
       <!-- Modal Header -->
-      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-        <h3 id="goalModalTitle" class="text-base sm:text-lg font-black text-slate-100 flex items-center gap-2">
+      <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h3 id="goalModalTitle" class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
           🎯 Set Up New Goal
         </h3>
-        <button id="btnCloseGoalModal" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+        <button id="btnCloseGoalModal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition">
           ✕
         </button>
       </div>
@@ -190,39 +195,39 @@
 
         <!-- 1. Goal Title -->
         <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
-            Goal / Habit Title <span class="text-rose-400">*</span>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+            Goal / Habit Title <span class="text-rose-500">*</span>
           </label>
           <input
             type="text"
             id="formGoalTitle"
             required
             placeholder="e.g., German C1 Practice, Morning 3km Run, Read 20 pages..."
-            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
           />
         </div>
 
         <!-- 2. Content / Habit Details & Motivation -->
         <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
             Habit Content & Motivation (Why do you want to keep this streak?)
           </label>
           <textarea
             id="formGoalContent"
             rows="2"
             placeholder="Describe your habit and why you are committed to not giving up..."
-            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
           ></textarea>
         </div>
 
         <!-- 3. Category -->
         <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
             Category
           </label>
           <select
             id="formGoalCategory"
-            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
           >
             <option value="study">📚 Study & Languages</option>
             <option value="health">🏃 Health & Fitness</option>
@@ -234,29 +239,29 @@
         </div>
 
         <!-- 4. DAILY TARGET MODE (Just tick vs Numeric quantity) -->
-        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-2.5">
           <div class="flex items-center justify-between">
-            <label class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+            <label class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
               <span>🎯</span> Daily Target Mode
             </label>
-            <span class="text-[11px] text-slate-400">Choose completion style</span>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400">Choose completion style</span>
           </div>
 
           <!-- Radio Selection: Simple Tick vs Custom Target -->
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-700 bg-slate-950 cursor-pointer hover:border-indigo-500 transition">
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 cursor-pointer hover:border-indigo-500 transition shadow-sm">
               <input type="radio" name="targetMode" value="tick" checked class="text-indigo-600 focus:ring-indigo-500" />
               <div>
-                <strong class="block text-slate-200">Just Tick (✓)</strong>
-                <span class="text-[10px] text-slate-400">1-click check-in</span>
+                <strong class="block text-slate-800 dark:text-slate-200">Just Tick (✓)</strong>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400">1-click check-in</span>
               </div>
             </label>
 
-            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-700 bg-slate-950 cursor-pointer hover:border-indigo-500 transition">
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 cursor-pointer hover:border-indigo-500 transition shadow-sm">
               <input type="radio" name="targetMode" value="custom" class="text-indigo-600 focus:ring-indigo-500" />
               <div>
-                <strong class="block text-slate-200">Specific Amount</strong>
-                <span class="text-[10px] text-slate-400">e.g. 30 mins, 5 km</span>
+                <strong class="block text-slate-800 dark:text-slate-200">Specific Amount</strong>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400">e.g. 30 mins, 5 km</span>
               </div>
             </label>
           </div>
@@ -267,7 +272,7 @@
               type="text"
               id="formDailyTarget"
               placeholder="e.g., 30 mins, 10 pages, 5 km, 1 chapter..."
-              class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-xs focus:ring-2 focus:ring-indigo-500"
+              class="w-full px-3.5 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-xs focus:ring-2 focus:ring-indigo-500/50"
             />
           </div>
         </div>
@@ -275,12 +280,12 @@
         <!-- 5. Cadence & Reminder -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
               Streak Cadence
             </label>
             <select
               id="formCadence"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
             >
               <option value="daily">Daily (1 day - with 1-Day Grace Period)</option>
               <option value="weekdays">Weekdays (Mon - Fri)</option>
@@ -289,28 +294,28 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
               Daily Reminder Time
             </label>
             <input
               type="time"
               id="formReminderTime"
               value="20:00"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
             />
           </div>
         </div>
 
         <!-- 6. MILESTONE TARGET & TARGET DEADLINE DATE (Linked) -->
-        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-2.5">
           <div class="flex items-center justify-between">
-            <label class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+            <label class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
               <span>🏆</span> Milestone Target & Deadline Date
             </label>
             <button
               type="button"
               id="btnAutoCalculateDeadline"
-              class="text-[11px] font-bold text-indigo-300 hover:text-white bg-indigo-950/80 hover:bg-indigo-900 px-2.5 py-1 rounded-lg border border-indigo-700/60 transition"
+              class="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 hover:text-indigo-900 bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-indigo-700/60 transition shadow-sm"
               title="Automatically calculate deadline date based on milestone days"
             >
               ⚡ Auto-Set Deadline
@@ -319,10 +324,10 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <span class="block text-[11px] font-semibold text-slate-400 mb-1">Milestone Days Goal</span>
+              <span class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Milestone Days Goal</span>
               <select
                 id="formTargetStreak"
-                class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 text-xs focus:ring-2 focus:ring-indigo-500"
+                class="w-full px-3.5 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-indigo-500/50"
               >
                 <option value="7">7 Days (Starter Sprint)</option>
                 <option value="21">21 Days (Habit Formation)</option>
@@ -334,63 +339,63 @@
             </div>
 
             <div>
-              <span class="block text-[11px] font-semibold text-slate-400 mb-1">Target Deadline Date</span>
+              <span class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Target Deadline Date</span>
               <input
                 type="date"
                 id="formDeadline"
-                class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 text-xs focus:ring-2 focus:ring-indigo-500"
+                class="w-full px-3.5 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs focus:ring-2 focus:ring-indigo-500/50"
               />
             </div>
           </div>
-          <span class="text-[10px] text-slate-400 block">Pick any custom deadline date or click <strong>"⚡ Auto-Set Deadline"</strong> to calculate it from your milestone!</span>
+          <span class="text-[10px] text-slate-500 dark:text-slate-400 block">Pick any custom deadline date or click <strong>"⚡ Auto-Set Deadline"</strong> to calculate it from your milestone!</span>
         </div>
 
         <!-- 7. THEME SELECTION (Garden, Zoo, Aquarium, Candy, Custom) -->
         <div class="pt-1">
-          <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+          <label class="block text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
             <span>🎨</span> Choose Gamification Theme for this Goal
           </label>
-          <p class="text-[11px] text-slate-400 mb-2">Each goal grows its own distinct world as you build streaks:</p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-2">Each goal grows its own distinct world as you build streaks:</p>
 
           <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="themeRadioGroup">
             <!-- Garden -->
-            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-emerald-500 cursor-pointer transition">
+            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-emerald-500 cursor-pointer transition shadow-sm">
               <input type="radio" name="goalTheme" value="garden" class="hidden" checked />
               <span class="text-2xl mb-1">🌱</span>
-              <span class="text-xs font-bold text-slate-200">Magic Garden</span>
-              <span class="text-[10px] text-emerald-400">Plants & Fruits</span>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Magic Garden</span>
+              <span class="text-[10px] text-emerald-600 dark:text-emerald-400">Plants & Fruits</span>
             </label>
 
             <!-- Zoo -->
-            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-amber-500 cursor-pointer transition">
+            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-amber-500 cursor-pointer transition shadow-sm">
               <input type="radio" name="goalTheme" value="zoo" class="hidden" />
               <span class="text-2xl mb-1">🦁</span>
-              <span class="text-xs font-bold text-slate-200">Safari Zoo</span>
-              <span class="text-[10px] text-amber-400">Wild Animals</span>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Safari Zoo</span>
+              <span class="text-[10px] text-amber-600 dark:text-amber-400">Wild Animals</span>
             </label>
 
             <!-- Aquarium -->
-            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-cyan-500 cursor-pointer transition">
+            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-cyan-500 cursor-pointer transition shadow-sm">
               <input type="radio" name="goalTheme" value="aquarium" class="hidden" />
               <span class="text-2xl mb-1">🐬</span>
-              <span class="text-xs font-bold text-slate-200">Aquarium</span>
-              <span class="text-[10px] text-cyan-400">Ocean Creatures</span>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Aquarium</span>
+              <span class="text-[10px] text-cyan-600 dark:text-cyan-400">Ocean Creatures</span>
             </label>
 
             <!-- Candy -->
-            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-pink-500 cursor-pointer transition">
+            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-pink-500 cursor-pointer transition shadow-sm">
               <input type="radio" name="goalTheme" value="candy" class="hidden" />
               <span class="text-2xl mb-1">🍭</span>
-              <span class="text-xs font-bold text-slate-200">Candy Land</span>
-              <span class="text-[10px] text-pink-400">Sweets & Cakes</span>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Candy Land</span>
+              <span class="text-[10px] text-pink-600 dark:text-pink-400">Sweets & Cakes</span>
             </label>
 
             <!-- Custom Emoji -->
-            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-indigo-500 cursor-pointer transition">
+            <label class="theme-choice flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-indigo-500 cursor-pointer transition shadow-sm">
               <input type="radio" name="goalTheme" value="custom" class="hidden" />
               <span class="text-2xl mb-1">⭐</span>
-              <span class="text-xs font-bold text-slate-200">Custom</span>
-              <span class="text-[10px] text-indigo-400">Your Own Icon</span>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Custom</span>
+              <span class="text-[10px] text-indigo-600 dark:text-indigo-400">Your Own Icon</span>
             </label>
           </div>
 
@@ -401,17 +406,17 @@
               id="formCustomEmoji"
               placeholder="Enter 1 emoji (e.g. 🚀, 💻, 🥋, ☕, 🎨...)"
               maxlength="4"
-              class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-indigo-500/60 text-slate-100 text-center text-lg"
+              class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-indigo-400 text-slate-900 dark:text-slate-100 text-center text-lg"
             />
           </div>
         </div>
 
         <!-- Submit Button -->
-        <div class="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
-          <button type="button" id="btnCancelGoalModal" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition">
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
+          <button type="button" id="btnCancelGoalModal" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition">
             Cancel
           </button>
-          <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-rose-500 hover:from-indigo-600 hover:to-rose-600 text-white font-bold shadow-lg shadow-indigo-500/25 transition">
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-rose-600 hover:from-indigo-700 hover:to-rose-700 text-white font-bold shadow-lg shadow-indigo-500/25 transition">
             Save Goal
           </button>
         </div>
@@ -422,44 +427,44 @@
   <!-- ======================================================================
        MODAL 2: STREAK WORLD MODAL
        ====================================================================== -->
-  <div id="worldModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
-    <div class="glass-modal w-full sm:max-w-3xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-700 transform translate-y-8 transition-transform duration-200" id="worldModalBox">
+  <div id="worldModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+    <div class="glass-modal w-full sm:max-w-3xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 transform translate-y-8 transition-transform duration-200" id="worldModalBox">
       <!-- World Modal Header with Custom Theme Styling -->
-      <div id="worldHeaderBanner" class="p-5 border-b border-slate-800/80 flex items-center justify-between relative overflow-hidden transition-colors duration-300">
+      <div id="worldHeaderBanner" class="p-5 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between relative overflow-hidden transition-colors duration-300">
         <div>
           <div class="flex items-center gap-2">
             <span id="worldThemeIcon" class="text-3xl animate-bounce">🌱</span>
             <div>
-              <h3 id="worldGoalTitle" class="text-lg sm:text-xl font-black text-white">
+              <h3 id="worldGoalTitle" class="text-lg sm:text-xl font-black">
                 Your World
               </h3>
-              <p id="worldThemeSubtext" class="text-xs text-emerald-300 font-medium">
+              <p id="worldThemeSubtext" class="text-xs font-semibold opacity-90">
                 Living Gamified Ecosystem
               </p>
             </div>
           </div>
         </div>
 
-        <button id="btnCloseWorldModal" class="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-slate-300 hover:text-white flex items-center justify-center transition">
+        <button id="btnCloseWorldModal" class="w-8 h-8 rounded-full bg-black/10 dark:bg-black/40 hover:bg-black/20 text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white flex items-center justify-center transition">
           ✕
         </button>
       </div>
 
       <!-- World Stats Strip -->
-      <div class="bg-slate-900/90 px-5 py-3 border-b border-slate-800 flex items-center justify-around text-center text-xs">
+      <div class="bg-slate-50 dark:bg-slate-900/90 px-5 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-around text-center text-xs">
         <div>
-          <span class="text-slate-400 block text-[10px] uppercase font-bold">Current Streak</span>
-          <span id="worldCurrentStreak" class="text-amber-400 font-black text-base sm:text-lg">0 days</span>
+          <span class="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">Current Streak</span>
+          <span id="worldCurrentStreak" class="text-amber-500 font-black text-base sm:text-lg">0 days</span>
         </div>
-        <div class="h-6 w-px bg-slate-800"></div>
+        <div class="h-6 w-px bg-slate-200 dark:bg-slate-800"></div>
         <div>
-          <span class="text-slate-400 block text-[10px] uppercase font-bold">Best Record</span>
-          <span id="worldLongestStreak" class="text-rose-400 font-black text-base sm:text-lg">0 days</span>
+          <span class="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">Best Record</span>
+          <span id="worldLongestStreak" class="text-rose-500 font-black text-base sm:text-lg">0 days</span>
         </div>
-        <div class="h-6 w-px bg-slate-800"></div>
+        <div class="h-6 w-px bg-slate-200 dark:bg-slate-800"></div>
         <div>
-          <span class="text-slate-400 block text-[10px] uppercase font-bold">Grace Period</span>
-          <span id="worldGraceStatus" class="text-emerald-400 font-bold text-xs sm:text-sm">1-Day Shield Active 🛡️</span>
+          <span class="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">Grace Period</span>
+          <span id="worldGraceStatus" class="text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm">1-Day Shield Active 🛡️</span>
         </div>
       </div>
 
@@ -471,24 +476,24 @@
         </div>
 
         <!-- Selected Slot Detail Callout -->
-        <div id="slotDetailBox" class="hidden glass-card rounded-xl p-3.5 border border-indigo-500/40 text-xs flex items-center justify-between">
+        <div id="slotDetailBox" class="hidden glass-card rounded-2xl p-3.5 border border-indigo-300 dark:border-indigo-500/40 text-xs flex items-center justify-between">
           <div class="flex items-center gap-3">
             <span id="slotDetailEmoji" class="text-3xl">🌱</span>
             <div>
-              <h4 id="slotDetailTitle" class="font-bold text-slate-200">Sprout (1 Day)</h4>
-              <p id="slotDetailDesc" class="text-slate-400 text-[11px]">Completed on 2026-10-25</p>
+              <h4 id="slotDetailTitle" class="font-bold text-slate-900 dark:text-slate-200">Sprout (1 Day)</h4>
+              <p id="slotDetailDesc" class="text-slate-500 dark:text-slate-400 text-[11px]">Completed on 2026-10-25</p>
             </div>
           </div>
-          <button onclick="document.getElementById('slotDetailBox').classList.add('hidden')" class="text-slate-400 hover:text-white text-xs">
+          <button onclick="document.getElementById('slotDetailBox').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-xs">
             Close
           </button>
         </div>
 
         <!-- Legend -->
-        <div class="bg-slate-900/60 rounded-2xl p-4 border border-slate-800/80">
-          <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
+        <div class="bg-slate-50 dark:bg-slate-900/60 rounded-2xl p-4 border border-slate-200 dark:border-slate-800/80">
+          <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
             <span>📖 Milestone Tiers Legend</span>
-            <button id="btnToggleAuditLog" class="text-indigo-400 hover:text-indigo-300 text-[11px] font-semibold underline">
+            <button id="btnToggleAuditLog" class="text-indigo-600 dark:text-indigo-400 hover:underline text-[11px] font-semibold">
               View Audit Log 📋
             </button>
           </h4>
@@ -498,25 +503,25 @@
         </div>
 
         <!-- Audit Log View (Collapsible) -->
-        <div id="auditLogDrawer" class="hidden bg-slate-900 rounded-2xl p-4 border border-slate-800 space-y-2">
+        <div id="auditLogDrawer" class="hidden bg-slate-50 dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 space-y-2">
           <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-slate-200">Recorded Check-in Dates (Audit Trail)</h4>
-            <span id="auditTotalCount" class="text-xs text-indigo-400 font-bold">0 days</span>
+            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Recorded Check-in Dates (Audit Trail)</h4>
+            <span id="auditTotalCount" class="text-xs text-indigo-600 dark:text-indigo-400 font-bold">0 days</span>
           </div>
-          <div id="auditDatesList" class="max-h-36 overflow-y-auto text-xs font-mono text-slate-300 space-y-1 p-2 bg-slate-950 rounded-xl">
+          <div id="auditDatesList" class="max-h-36 overflow-y-auto text-xs font-mono text-slate-700 dark:text-slate-300 space-y-1 p-2 bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
             <!-- Dates listed here -->
           </div>
         </div>
       </div>
 
       <!-- World Footer with Self-Healing Action -->
-      <div class="px-5 py-3.5 bg-slate-900/90 border-t border-slate-800 flex items-center justify-between text-xs">
-        <button id="btnSelfHealStreak" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold flex items-center gap-1.5 transition">
+      <div class="px-5 py-3.5 bg-slate-50 dark:bg-slate-900/90 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+        <button id="btnSelfHealStreak" class="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold flex items-center gap-1.5 transition border border-slate-200 dark:border-slate-700 shadow-sm">
           <span>🩺</span>
-          <span>Self-Heal Streak (Audit Log Scan)</span>
+          <span>Self-Heal Streak</span>
         </button>
 
-        <button id="btnWorldDone" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition">
+        <button id="btnWorldDone" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition shadow-sm">
           Done
         </button>
       </div>
@@ -526,73 +531,73 @@
   <!-- ======================================================================
        MODAL 3: FIREBASE CLOUD SYNC SETTINGS
        ====================================================================== -->
-  <div id="firebaseModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
-    <div class="glass-modal w-full sm:max-w-lg max-h-[92vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-700 transform translate-y-8 transition-transform duration-200" id="firebaseModalBox">
-      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-        <h3 class="text-base sm:text-lg font-black text-slate-100 flex items-center gap-2">
+  <div id="firebaseModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+    <div class="glass-modal w-full sm:max-w-lg max-h-[92vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 transform translate-y-8 transition-transform duration-200" id="firebaseModalBox">
+      <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
           ☁️ Firebase Cloud Sync & Multi-Device
         </h3>
-        <button id="btnCloseFirebaseModal" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+        <button id="btnCloseFirebaseModal" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition">
           ✕
         </button>
       </div>
 
       <div class="p-6 space-y-4 overflow-y-auto flex-1 text-sm">
-        <div class="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-700/50 text-xs leading-relaxed text-indigo-200">
+        <div class="p-3.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-700/50 text-xs leading-relaxed text-indigo-900 dark:text-indigo-200">
           💡 <strong>Offline-First & Union Merge:</strong> Streaks are always saved locally on your phone first. When online, your activity merges automatically without ever overwriting or losing past days!
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
             Firebase Project ID
           </label>
           <input
             type="text"
             id="cfgFirebaseProjectId"
             value="streakapp-6eab3"
-            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-indigo-500"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 font-mono text-xs focus:ring-2 focus:ring-indigo-500/50"
           />
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
             Firebase Realtime Database URL
           </label>
           <input
             type="text"
             id="cfgFirebaseDatabaseUrl"
             value="https://streakapp-6eab3-default-rtdb.firebaseio.com"
-            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-indigo-500"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 font-mono text-xs focus:ring-2 focus:ring-indigo-500/50"
           />
-          <span class="text-[11px] text-slate-400 mt-1 block">Configured from your Firebase Console.</span>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">Configured from your Firebase Console.</span>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
             User / Device Sync Key
           </label>
           <div class="flex gap-2">
             <input
               type="text"
               id="cfgUserSyncId"
-              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-indigo-500"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 font-mono text-xs focus:ring-2 focus:ring-indigo-500/50"
             />
-            <button id="btnGenerateNewSyncId" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 whitespace-nowrap">
+            <button id="btnGenerateNewSyncId" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap border border-slate-200 dark:border-slate-700">
               Generate
             </button>
           </div>
-          <span class="text-[11px] text-slate-400 mt-1 block">Use the same sync key on your phone and laptop to share data.</span>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">Use the same sync key on your phone and laptop to share data.</span>
         </div>
 
         <!-- Connection Test Status -->
-        <div id="firebaseTestResult" class="text-xs p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 flex items-center justify-between">
+        <div id="firebaseTestResult" class="text-xs p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-between">
           <span>Connection Status:</span>
-          <span id="firebaseStatusBadge" class="font-bold text-amber-400">Not Tested</span>
+          <span id="firebaseStatusBadge" class="font-bold text-amber-500">Not Tested</span>
         </div>
 
         <!-- Manual Actions -->
         <div class="pt-2 flex flex-col sm:flex-row gap-2">
-          <button id="btnTestFirebaseConn" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition">
+          <button id="btnTestFirebaseConn" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition border border-slate-200 dark:border-slate-700">
             🔌 Test Connection
           </button>
           <button id="btnForceSyncCloud" class="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-lg shadow-emerald-600/30">
@@ -601,13 +606,13 @@
         </div>
 
         <!-- Backup & Restore -->
-        <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
-          <span class="text-xs text-slate-400 font-semibold">Manual Backup:</span>
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">Manual Backup:</span>
           <div class="flex gap-2">
-            <button id="btnExportJson" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300">
+            <button id="btnExportJson" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
               Export JSON 💾
             </button>
-            <label class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 cursor-pointer">
+            <label class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 cursor-pointer">
               Import JSON 📥
               <input type="file" id="importJsonInput" accept=".json" class="hidden" />
             </label>
@@ -615,8 +620,8 @@
         </div>
       </div>
 
-      <div class="px-6 py-3.5 bg-slate-900 border-t border-slate-800 flex justify-end">
-        <button id="btnSaveFirebaseConfig" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition">
+      <div class="px-6 py-3.5 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+        <button id="btnSaveFirebaseConfig" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-sm">
           Save Settings
         </button>
       </div>
@@ -624,17 +629,17 @@
   </div>
 
   <!-- FLOATING BOTTOM PWA INSTALL PROMPT -->
-  <div id="pwaInstallBanner" class="hidden fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40 glass-card p-3 rounded-2xl border border-indigo-500/50 flex items-center justify-between shadow-2xl">
+  <div id="pwaInstallBanner" class="hidden fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40 glass-card p-3 rounded-2xl border border-indigo-300 dark:border-indigo-500/50 flex items-center justify-between shadow-2xl">
     <div class="flex items-center gap-2.5">
       <span class="text-2xl">📲</span>
       <div>
-        <p class="text-xs font-bold text-white">Add App to Home Screen</p>
-        <p class="text-[10px] text-slate-300">Enjoy offline access and full-screen mobile app experience!</p>
+        <p class="text-xs font-bold text-slate-900 dark:text-white">Add App to Home Screen</p>
+        <p class="text-[10px] text-slate-500 dark:text-slate-300">Enjoy offline access and full-screen mobile app experience!</p>
       </div>
     </div>
     <div class="flex items-center gap-1.5">
       <button id="btnPwaInstall" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold">Install</button>
-      <button id="btnPwaDismiss" class="text-slate-400 hover:text-white px-2 py-1 text-xs">✕</button>
+      <button id="btnPwaDismiss" class="text-slate-400 hover:text-slate-600 px-2 py-1 text-xs">✕</button>
     </div>
   </div>
 

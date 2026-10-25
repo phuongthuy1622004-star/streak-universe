@@ -1,50 +1,75 @@
 /* ==========================================================================
-   STREAK UNIVERSE - CUSTOM STYLES & GAMIFICATION THEMES
+   STREAK UNIVERSE - LIGHT & BRIGHT THEME WITH DARK MODE SUPPORT
    ========================================================================== */
 
 :root {
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
   --accent: #f59e0b;
-  --bg-dark: #0f172a;
-  --card-dark: #1e293b;
-  --border-dark: #334155;
+  --bg-main: #f8fafc;
+  --bg-radial: radial-gradient(circle at 50% 0%, #e0e7ff 0%, #f8fafc 60%);
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --modal-bg: rgba(255, 255, 255, 0.98);
+  --border-color: rgba(226, 232, 240, 0.9);
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-sub: #64748b;
   --safe-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+/* Dark Mode Overrides (if toggled) */
+.dark {
+  --bg-main: #0f172a;
+  --bg-radial: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 70%);
+  --card-bg: rgba(30, 41, 59, 0.85);
+  --modal-bg: rgba(15, 23, 42, 0.96);
+  --border-color: rgba(51, 65, 85, 0.8);
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
+  --text-sub: #94a3b8;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: var(--bg-dark);
-  color: #f8fafc;
+  background-color: var(--bg-main);
+  background-image: var(--bg-radial);
+  background-attachment: fixed;
+  color: var(--text-main);
   min-height: 100vh;
   padding-bottom: calc(var(--safe-bottom) + 24px);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Glassmorphism Cards */
 .glass-card {
-  background: rgba(30, 41, 59, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 4px 10px -4px rgba(0, 0, 0, 0.03);
+}
+
+.dark .glass-card {
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
 }
 
 .glass-modal {
-  background: rgba(15, 23, 42, 0.94);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--modal-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 }
 
 /* Custom Glows */
 .flame-glow {
-  filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.65));
+  filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.5));
 }
 
 .magic-glow {
-  filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.45));
 }
 
 /* Pop-in animation for Garden / World elements */
@@ -64,10 +89,10 @@ body {
 
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
   }
   50% {
-    box-shadow: 0 0 25px rgba(245, 158, 11, 0.85);
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.7);
   }
 }
 
@@ -84,7 +109,7 @@ body {
   animation: floatAnim 3s ease-in-out infinite;
 }
 
-/* Garden & World Slots */
+/* World Slots (Grid Elements) */
 .world-slot {
   display: flex;
   flex-direction: column;
@@ -95,57 +120,86 @@ body {
   position: relative;
   cursor: pointer;
   transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25);
   min-height: 80px;
+  box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .world-slot:hover {
   transform: translateY(-4px) scale(1.05);
   z-index: 10;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .world-slot:active {
   transform: scale(0.96);
 }
 
-/* Healthy Slots */
+/* Healthy Slots (Light & Bright) */
 .world-slot.healthy {
-  background: linear-gradient(145deg, rgba(34, 197, 94, 0.18), rgba(16, 185, 129, 0.08));
-  border: 1px solid rgba(52, 211, 153, 0.35);
+  background: linear-gradient(145deg, #ecfdf5, #d1fae5);
+  border: 1px solid #6ee7b7;
 }
 
 .world-slot.healthy.tier-5 {
-  border-color: rgba(59, 130, 246, 0.5);
-  background: linear-gradient(145deg, rgba(59, 130, 246, 0.22), rgba(16, 185, 129, 0.1));
+  background: linear-gradient(145deg, #eff6ff, #dbeafe);
+  border: 1px solid #93c5fd;
 }
 
 .world-slot.healthy.tier-10 {
-  border-color: rgba(236, 72, 153, 0.55);
-  background: linear-gradient(145deg, rgba(236, 72, 153, 0.24), rgba(147, 51, 234, 0.14));
+  background: linear-gradient(145deg, #fdf2f8, #fbcfe8);
+  border: 1px solid #f472b6;
 }
 
 .world-slot.healthy.tier-15 {
-  border-color: rgba(245, 158, 11, 0.6);
-  background: linear-gradient(145deg, rgba(245, 158, 11, 0.26), rgba(239, 68, 68, 0.15));
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+  background: linear-gradient(145deg, #fffbeb, #fef3c7);
+  border: 1px solid #fbbf24;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
 }
 
 .world-slot.healthy.tier-100 {
+  border: 2px solid #f59e0b;
+  background: linear-gradient(135deg, #fef3c7, #fce7f3);
+  animation: pulseGlow 2.5s infinite;
+}
+
+/* Dark Mode Healthy Slots */
+.dark .world-slot.healthy {
+  background: linear-gradient(145deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.1));
+  border-color: rgba(52, 211, 153, 0.4);
+}
+.dark .world-slot.healthy.tier-5 {
+  background: linear-gradient(145deg, rgba(59, 130, 246, 0.22), rgba(16, 185, 129, 0.1));
+  border-color: rgba(59, 130, 246, 0.5);
+}
+.dark .world-slot.healthy.tier-10 {
+  background: linear-gradient(145deg, rgba(236, 72, 153, 0.24), rgba(147, 51, 234, 0.14));
+  border-color: rgba(236, 72, 153, 0.55);
+}
+.dark .world-slot.healthy.tier-15 {
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.26), rgba(239, 68, 68, 0.15));
+  border-color: rgba(245, 158, 11, 0.6);
+}
+.dark .world-slot.healthy.tier-100 {
   border: 2px solid #fbbf24;
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.45), rgba(236, 72, 153, 0.45));
-  animation: pulseGlow 2.5s infinite;
 }
 
 /* Dead Slots (Gap Days) */
 .world-slot.dead {
-  background: linear-gradient(145deg, rgba(71, 85, 105, 0.25), rgba(15, 23, 42, 0.4));
-  border: 1px dashed rgba(148, 163, 184, 0.25);
-  opacity: 0.72;
+  background: #f1f5f9;
+  border: 1px dashed #cbd5e1;
+  opacity: 0.75;
 }
 
 .world-slot.dead:hover {
   opacity: 1;
-  border-color: rgba(239, 68, 68, 0.5);
+  border-color: #ef4444;
+}
+
+.dark .world-slot.dead {
+  background: linear-gradient(145deg, rgba(71, 85, 105, 0.25), rgba(15, 23, 42, 0.4));
+  border: 1px dashed rgba(148, 163, 184, 0.25);
+  opacity: 0.72;
 }
 
 /* Badge in Slot */
@@ -160,49 +214,96 @@ body {
 }
 
 .healthy .slot-badge {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.dark .healthy .slot-badge {
   background: rgba(16, 185, 129, 0.25);
   color: #6ee7b7;
   border: 1px solid rgba(110, 231, 183, 0.3);
 }
 
 .dead .slot-badge {
+  background: #e2e8f0;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.dark .dead .slot-badge {
   background: rgba(100, 116, 139, 0.3);
   color: #cbd5e1;
   border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 /* ==========================================================================
-   THEME PALETTES (Garden, Zoo, Aquarium, Candy, Custom)
+   THEME BANNER PALETTES (Bright, Fresh & Cheerful)
    ========================================================================== */
 
 /* 1. Theme Garden */
 .theme-garden {
+  background: linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 100%);
+  border-color: #6ee7b7;
+  color: #064e3b;
+}
+
+.dark .theme-garden {
   background: radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.3), transparent 75%), #092615;
   border-color: rgba(34, 197, 94, 0.35);
+  color: #f8fafc;
 }
 
 /* 2. Theme Zoo */
 .theme-zoo {
+  background: linear-gradient(135deg, #fffbeb 0%, #fde68a 100%);
+  border-color: #fcd34d;
+  color: #78350f;
+}
+
+.dark .theme-zoo {
   background: radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.35), transparent 75%), #231709;
   border-color: rgba(245, 158, 11, 0.4);
+  color: #f8fafc;
 }
 
 /* 3. Theme Aquarium */
 .theme-aquarium {
+  background: linear-gradient(135deg, #ecfeff 0%, #a5f3fc 100%);
+  border-color: #67e8f9;
+  color: #164e63;
+}
+
+.dark .theme-aquarium {
   background: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.35), transparent 75%), #051c2c;
   border-color: rgba(6, 182, 212, 0.4);
+  color: #f8fafc;
 }
 
 /* 4. Theme Candy */
 .theme-candy {
+  background: linear-gradient(135deg, #fdf2f8 0%, #fbcfe8 100%);
+  border-color: #f472b6;
+  color: #831843;
+}
+
+.dark .theme-candy {
   background: radial-gradient(circle at 50% 0%, rgba(244, 114, 182, 0.35), transparent 75%), #281023;
   border-color: rgba(244, 114, 182, 0.4);
+  color: #f8fafc;
 }
 
 /* 5. Theme Custom */
 .theme-custom {
+  background: linear-gradient(135deg, #eef2ff 0%, #c7d2fe 100%);
+  border-color: #818cf8;
+  color: #312e81;
+}
+
+.dark .theme-custom {
   background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.35), transparent 75%), #110d29;
   border-color: rgba(99, 102, 241, 0.4);
+  color: #f8fafc;
 }
 
 /* Custom Scrollbars */
@@ -211,14 +312,20 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.dark ::-webkit-scrollbar-track {
   background: rgba(15, 23, 42, 0.6);
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #94a3b8;
 }
 
 /* Interactive Checkbox Button */

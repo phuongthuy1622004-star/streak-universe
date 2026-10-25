@@ -3,6 +3,7 @@
  * Architecture based on Deutsch C1 Technical Specification
  * Features:
  * - Multi-Goal / Multi-Habit System (English UI)
+ * - Bright, Light Theme by default with Day/Night toggle
  * - Daily Target Modes: "Just Tick (✓)" vs "Specific Quantity"
  * - Linked Milestone Target & Target Deadline Date with Auto-Calculation
  * - Idempotency & 1-Day Automatic Grace Period
@@ -658,6 +659,8 @@ class AppController {
 
   initElements() {
     // Header & Stats
+    this.btnThemeToggle = document.getElementById('btnThemeToggle');
+    this.themeToggleIcon = document.getElementById('themeToggleIcon');
     this.btnOpenCreateGoal = document.getElementById('btnOpenCreateGoal');
     this.btnOpenFirebaseModal = document.getElementById('btnOpenFirebaseModal');
     this.syncStatusDot = document.getElementById('syncStatusDot');
@@ -743,6 +746,11 @@ class AppController {
   }
 
   bindEvents() {
+    // Light / Dark Theme Toggle
+    if (this.btnThemeToggle) {
+      this.btnThemeToggle.addEventListener('click', () => this.toggleTheme());
+    }
+
     // Open Create Goal Modal
     this.btnOpenCreateGoal.addEventListener('click', () => this.openGoalModal());
     this.btnCloseGoalModal.addEventListener('click', () => this.closeGoalModal());
@@ -787,10 +795,10 @@ class AppController {
       if (!btn) return;
       document.querySelectorAll('.cat-pill').forEach(p => {
         p.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm', 'active');
-        p.classList.add('bg-slate-800', 'text-slate-300');
+        p.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
       });
       btn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm', 'active');
-      btn.classList.remove('bg-slate-800', 'text-slate-300');
+      btn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
       this.activeCategory = btn.dataset.cat;
       this.renderGoals();
     });
@@ -854,7 +862,28 @@ class AppController {
     }
   }
 
+  // Day / Night Theme Management (Light mode default)
+  applyTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      if (this.themeToggleIcon) this.themeToggleIcon.textContent = '🌙';
+    } else {
+      document.documentElement.classList.remove('dark');
+      if (this.themeToggleIcon) this.themeToggleIcon.textContent = '☀️';
+    }
+    localStorage.setItem('streak_universe_theme', theme);
+  }
+
+  toggleTheme() {
+    const isDark = document.documentElement.classList.contains('dark');
+    this.applyTheme(isDark ? 'light' : 'dark');
+  }
+
   loadInitialData() {
+    // Default to light theme for a bright, cheerful aesthetic
+    const savedTheme = localStorage.getItem('streak_universe_theme') || 'light';
+    this.applyTheme(savedTheme);
+
     this.goals = AppStorage.getGoals();
 
     // If completely new user, generate default goals
@@ -1013,12 +1042,12 @@ class AppController {
 
       // Category badge
       const catMap = {
-        study: { label: 'Study', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30' },
-        health: { label: 'Health', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
-        work: { label: 'Work', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
-        mind: { label: 'Wellness', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
-        finance: { label: 'Finance', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
-        other: { label: 'Other', color: 'bg-slate-500/20 text-slate-300 border-slate-500/30' }
+        study: { label: 'Study', color: 'bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/30' },
+        health: { label: 'Health', color: 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30' },
+        work: { label: 'Work', color: 'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/30' },
+        mind: { label: 'Wellness', color: 'bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/30' },
+        finance: { label: 'Finance', color: 'bg-teal-50 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-500/30' },
+        other: { label: 'Other', color: 'bg-slate-100 dark:bg-slate-500/20 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-500/30' }
       };
       const cat = catMap[goal.category] || catMap.other;
 
@@ -1027,11 +1056,11 @@ class AppController {
       if (goal.deadline) {
         const diff = StreakEngine.diffDays(new Date(), StreakEngine.parseDate(goal.deadline));
         if (diff < 0) {
-          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30 font-medium">Overdue (${Math.abs(diff)}d)</span>`;
+          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 font-semibold">Overdue (${Math.abs(diff)}d)</span>`;
         } else if (diff === 0) {
-          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 font-medium">Due Today!</span>`;
+          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30 font-semibold">Due Today!</span>`;
         } else {
-          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium">${diff} days left</span>`;
+          deadlineBadge = `<span class="text-[10px] px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 font-semibold">${diff} days left</span>`;
         }
       }
 
@@ -1041,21 +1070,21 @@ class AppController {
         : `<strong>Target:</strong> Tick ✓ to complete`;
 
       return `
-        <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 hover:border-slate-600/80 group">
+        <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 hover:border-slate-300 dark:hover:border-slate-600/80 group">
           <!-- Card Top: Category, Theme, Actions Menu -->
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-xl p-1.5 rounded-xl bg-slate-800/90 border border-slate-700/80 shadow-sm">${displayIcon}</span>
+              <span class="text-xl p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 shadow-sm">${displayIcon}</span>
               <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${cat.color}">${cat.label}</span>
               ${deadlineBadge}
             </div>
 
             <!-- Quick Actions Dropdown / Buttons -->
             <div class="flex items-center gap-1">
-              <button onclick="app.openEditGoal('${goal.id}')" title="Edit goal" class="w-7 h-7 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center text-xs transition">
+              <button onclick="app.openEditGoal('${goal.id}')" title="Edit goal" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-xs transition">
                 ✏️
               </button>
-              <button onclick="app.deleteGoal('${goal.id}')" title="Delete goal" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 flex items-center justify-center text-xs transition">
+              <button onclick="app.deleteGoal('${goal.id}')" title="Delete goal" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-xs transition">
                 🗑️
               </button>
             </div>
@@ -1063,30 +1092,30 @@ class AppController {
 
           <!-- Goal Info -->
           <div class="my-3">
-            <h3 class="text-base font-bold text-white group-hover:text-indigo-300 transition-colors">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
               ${this.escapeHtml(goal.title)}
             </h3>
-            ${goal.content ? `<p class="text-xs text-slate-400 line-clamp-2 mt-1 leading-relaxed">${this.escapeHtml(goal.content)}</p>` : ''}
+            ${goal.content ? `<p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 leading-relaxed">${this.escapeHtml(goal.content)}</p>` : ''}
             
-            <div class="flex items-center gap-3 mt-2.5 text-[11px] text-slate-400">
+            <div class="flex items-center gap-3 mt-2.5 text-[11px] text-slate-500 dark:text-slate-400">
               <span class="flex items-center gap-1">🎯 ${targetDisplay}</span>
               ${goal.reminder_time ? `<span class="flex items-center gap-1">⏰ ${goal.reminder_time}</span>` : ''}
             </div>
           </div>
 
           <!-- Streak Info & Actions -->
-          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-3">
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-3">
             <!-- Streak Flame -->
             <div class="flex items-center gap-2">
-              <div class="w-10 h-10 rounded-xl bg-slate-900 border border-amber-500/40 flex items-center justify-center text-lg ${streakCount > 0 ? 'flame-glow' : 'opacity-60'}">
+              <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-slate-900 border border-amber-300 dark:border-amber-500/40 flex items-center justify-center text-lg ${streakCount > 0 ? 'flame-glow' : 'opacity-60'}">
                 🔥
               </div>
               <div>
-                <div class="text-base font-black text-amber-400 leading-tight">
-                  ${streakCount} <span class="text-xs font-semibold text-slate-400">days</span>
+                <div class="text-base font-black text-amber-500 leading-tight">
+                  ${streakCount} <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">days</span>
                 </div>
-                <div class="text-[10px] text-slate-400 font-medium">
-                  Best: <strong class="text-rose-400">${longestCount}</strong> days
+                <div class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                  Best: <strong class="text-rose-500">${longestCount}</strong> days
                 </div>
               </div>
             </div>
@@ -1095,7 +1124,7 @@ class AppController {
             <div class="flex items-center gap-2">
               <button
                 onclick="app.openWorldModal('${goal.id}')"
-                class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm"
+                class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5 shadow-sm"
               >
                 <span>${displayIcon}</span>
                 <span class="hidden xs:inline">Enter World</span>
@@ -1105,7 +1134,7 @@ class AppController {
                 onclick="app.toggleCheckIn('${goal.id}')"
                 class="streak-check-btn px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-md ${
                   isCompletedToday
-                    ? 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/60'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-600'
                     : 'bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white shadow-amber-500/25 active:scale-95'
                 }"
               >
@@ -1196,7 +1225,6 @@ class AppController {
       if (themeRadio) {
         themeRadio.checked = true;
       } else {
-        // fallback if previous theme was one of the removed ones
         const gardenRadio = document.querySelector('input[name="goalTheme"][value="garden"]');
         if (gardenRadio) gardenRadio.checked = true;
       }
@@ -1333,7 +1361,7 @@ class AppController {
     const displayIcon = (goal.theme === 'custom' && goal.custom_emoji) ? goal.custom_emoji : themeConfig.icon;
 
     // Header styling according to Theme
-    this.worldHeaderBanner.className = `p-5 border-b border-slate-800/80 flex items-center justify-between relative overflow-hidden transition-colors duration-300 ${themeConfig.themeClass}`;
+    this.worldHeaderBanner.className = `p-5 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between relative overflow-hidden transition-colors duration-300 ${themeConfig.themeClass}`;
     this.worldThemeIcon.textContent = displayIcon;
     this.worldGoalTitle.textContent = goal.title;
     this.worldThemeSubtext.textContent = themeConfig.name + ' • ' + themeConfig.subtext;
@@ -1386,8 +1414,8 @@ class AppController {
     const dates = (goal.streak_dates || []).slice().reverse();
     this.auditTotalCount.textContent = `${dates.length} days`;
     this.auditDatesList.innerHTML = dates.length > 0
-      ? dates.map(d => `<div class="py-0.5 border-b border-slate-900 flex justify-between"><span>${d}</span><span class="text-emerald-400">✓ Completed</span></div>`).join('')
-      : '<div class="text-slate-500">No recorded check-in dates yet</div>';
+      ? dates.map(d => `<div class="py-1 border-b border-slate-100 dark:border-slate-800 flex justify-between"><span>${d}</span><span class="text-emerald-600 dark:text-emerald-400 font-semibold">✓ Completed</span></div>`).join('')
+      : '<div class="text-slate-400">No recorded check-in dates yet</div>';
 
     this.worldModal.classList.remove('opacity-0', 'pointer-events-none');
     this.worldModalBox.classList.remove('translate-y-8');
@@ -1419,14 +1447,14 @@ class AppController {
       const deadInfo = themeConfig.dead[t] || { emoji: '🌾' };
 
       return `
-        <div class="p-2 rounded-xl bg-slate-950/60 border border-slate-800 text-center flex flex-col items-center">
+        <div class="p-2 rounded-xl bg-white dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-center flex flex-col items-center shadow-sm">
           <div class="flex items-center gap-1.5 text-base sm:text-lg mb-1">
             <span>${rep}</span>
-            <span class="text-[10px] text-slate-500">/</span>
+            <span class="text-[10px] text-slate-400">/</span>
             <span class="opacity-70">${deadInfo.emoji}</span>
           </div>
-          <span class="text-[10px] font-black text-indigo-300 uppercase">${t} Days</span>
-          <span class="text-[9px] text-slate-400 truncate max-w-full">${themeConfig.labels[t]}</span>
+          <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase">${t} Days</span>
+          <span class="text-[9px] text-slate-500 dark:text-slate-400 truncate max-w-full">${themeConfig.labels[t]}</span>
         </div>
       `;
     }).join('');
@@ -1487,7 +1515,7 @@ class AppController {
 
   async testFirebaseConnection() {
     this.firebaseStatusBadge.textContent = 'Testing connection... ⏳';
-    this.firebaseStatusBadge.className = 'font-bold text-amber-400';
+    this.firebaseStatusBadge.className = 'font-bold text-amber-500';
 
     const cfg = {
       projectId: this.cfgFirebaseProjectId.value.trim(),
@@ -1499,23 +1527,23 @@ class AppController {
     const result = await AppStorage.syncWithFirebase(false);
     if (result.success) {
       this.firebaseStatusBadge.textContent = '🟢 Connected Successfully!';
-      this.firebaseStatusBadge.className = 'font-bold text-emerald-400';
+      this.firebaseStatusBadge.className = 'font-bold text-emerald-600';
     } else {
       this.firebaseStatusBadge.textContent = `🔴 Error: ${result.error || result.message}`;
-      this.firebaseStatusBadge.className = 'font-bold text-rose-400';
+      this.firebaseStatusBadge.className = 'font-bold text-rose-500';
     }
   }
 
   async triggerCloudSync(interactive = false) {
     if (interactive) this.showToast('Running Union Merge algorithm with Firebase RTDB...');
 
-    this.syncStatusDot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-spin';
+    this.syncStatusDot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-spin';
     this.syncStatusText.textContent = 'Syncing...';
 
     const result = await AppStorage.syncWithFirebase(interactive);
 
     if (result.success) {
-      this.syncStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+      this.syncStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
       this.syncStatusText.textContent = 'Synced 🟢';
 
       // Reload goals from local storage since union merge might have brought new goals
@@ -1528,7 +1556,7 @@ class AppController {
         this.showToast(`🎉 Sync completed! (${result.count} goals unified)`);
       }
     } else {
-      this.syncStatusDot.className = 'w-2 h-2 rounded-full bg-slate-500';
+      this.syncStatusDot.className = 'w-2 h-2 rounded-full bg-slate-400';
       this.syncStatusText.textContent = 'Offline 🟡';
 
       if (interactive) {
@@ -1616,7 +1644,7 @@ class AppController {
 
     const toast = document.createElement('div');
     toast.id = 'appToast';
-    toast.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 glass-card px-4 py-2.5 rounded-2xl border border-indigo-500/60 text-xs font-semibold text-white shadow-2xl flex items-center gap-2 animate-bounce';
+    toast.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 glass-card px-4 py-2.5 rounded-2xl border border-indigo-500/60 text-xs font-semibold text-slate-900 dark:text-white shadow-2xl flex items-center gap-2 animate-bounce';
     toast.innerHTML = `<span>🔔</span><span>${message}</span>`;
 
     document.body.appendChild(toast);
