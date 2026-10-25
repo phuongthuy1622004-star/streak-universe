@@ -556,11 +556,7 @@ class AppController {
     AppStorage.loadGoals()
       .then(goals => {
         this.goals = goals;
-        // Seed defaults for brand new user
-        if (!this.goals.length) {
-          this.goals = this.defaultGoals();
-          return AppStorage.saveGoals(this.goals);
-        }
+        // No seeding — start completely empty for new users
       })
       .then(() => {
         // Passive expiration check
