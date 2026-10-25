@@ -557,24 +557,10 @@ class AppController {
       </div>`;
     this.emptyState.classList.add('hidden');
 
-    // Sample IDs to purge
-    const sampleIds = ['goal_deutsch', 'goal_running', 'goal_reading', 'goal_deutsch_c1'];
-
     // Load from Firebase
     AppStorage.loadGoals()
       .then(goals => {
-        const raw = Array.isArray(goals) ? goals : [];
-        // Filter out any leftover sample goals
-        this.goals = raw.filter(g => 
-          g && 
-          !sampleIds.includes(g.id) && 
-          !['German C1 Vocabulary', 'Morning 3km Run', 'Read 20 Pages Daily', 'German C1 & Vocabulary Practice'].includes(g.title)
-        );
-
-        // If sample goals existed in Firebase, clean them up permanently
-        if (this.goals.length !== raw.length) {
-          return AppStorage.saveGoals(this.goals);
-        }
+        this.goals = Array.isArray(goals) ? goals : [];
       })
       .then(() => {
         // Passive expiration check
