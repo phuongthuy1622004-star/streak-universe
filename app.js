@@ -1,5 +1,5 @@
-/**
- * STREAK UNIVERSE - HABIT & WORLD TRACKER
+const APP_VERSION = '1.2.0';
+window.APP_VERSION = APP_VERSION;
  * - Multi-Goal System | English UI | Light theme default
  * - Idempotency + 1-Day Grace Period Streak Engine
  * - Self-Healing from Audit Log
