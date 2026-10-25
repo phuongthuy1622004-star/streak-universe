@@ -1,0 +1,13 @@
+# Large notebooks or unrelated data
+*.ipynb
+.ipynb_checkpoints/
+
+# Cache & Temporary
+.DS_Store
+Thumbs.db
+*.log
+__pycache__/
+
+# Local IDE
+.vscode/
+.idea/
