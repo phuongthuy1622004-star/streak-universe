@@ -47,47 +47,47 @@ body {
 }
 
 /* ==========================================================================
-   PASTEL GOAL CARDS BY THEME
+   PASTEL GOAL CARDS BY THEME WITH DISTINCT VIVID BORDERS
    ========================================================================== */
 
 .card-theme-garden {
-  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-  border: 1.5px solid #86efac;
-  box-shadow: 0 6px 16px -2px rgba(34, 197, 94, 0.1);
+  background: #ffffff;
+  border: 2px solid #22c55e;
+  box-shadow: 0 4px 16px -2px rgba(34, 197, 94, 0.16), 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 .card-theme-garden:hover {
-  border-color: #4ade80;
-  box-shadow: 0 10px 22px -3px rgba(34, 197, 94, 0.18);
+  border-color: #16a34a;
+  box-shadow: 0 8px 24px -2px rgba(34, 197, 94, 0.25);
 }
 
 .card-theme-zoo {
-  background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
-  border: 1.5px solid #fde047;
-  box-shadow: 0 6px 16px -2px rgba(234, 179, 8, 0.1);
+  background: #ffffff;
+  border: 2px solid #f59e0b;
+  box-shadow: 0 4px 16px -2px rgba(245, 158, 11, 0.16), 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 .card-theme-zoo:hover {
-  border-color: #facc15;
-  box-shadow: 0 10px 22px -3px rgba(234, 179, 8, 0.18);
+  border-color: #d97706;
+  box-shadow: 0 8px 24px -2px rgba(245, 158, 11, 0.25);
 }
 
 .card-theme-aquarium {
-  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
-  border: 1.5px solid #7dd3fc;
-  box-shadow: 0 6px 16px -2px rgba(14, 165, 233, 0.1);
+  background: #ffffff;
+  border: 2px solid #0284c7;
+  box-shadow: 0 4px 16px -2px rgba(2, 132, 199, 0.16), 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 .card-theme-aquarium:hover {
-  border-color: #38bdf8;
-  box-shadow: 0 10px 22px -3px rgba(14, 165, 233, 0.18);
+  border-color: #0369a1;
+  box-shadow: 0 8px 24px -2px rgba(2, 132, 199, 0.25);
 }
 
 .card-theme-candy {
-  background: linear-gradient(135deg, #ffffff 0%, #fdf2f8 100%);
-  border: 1.5px solid #f472b6;
-  box-shadow: 0 6px 16px -2px rgba(236, 72, 153, 0.1);
+  background: #ffffff;
+  border: 2px solid #ec4899;
+  box-shadow: 0 4px 16px -2px rgba(236, 72, 153, 0.16), 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 .card-theme-candy:hover {
-  border-color: #ec4899;
-  box-shadow: 0 10px 22px -3px rgba(236, 72, 153, 0.18);
+  border-color: #db2777;
+  box-shadow: 0 8px 24px -2px rgba(236, 72, 153, 0.25);
 }
 
 /* Custom Glows */

@@ -28,7 +28,7 @@
         <div>
           <div class="flex items-center gap-1.5">
             <h1 class="text-sm font-black tracking-tight bg-gradient-to-r from-amber-600 via-rose-600 to-indigo-600 bg-clip-text text-transparent">STREAK UNIVERSE</h1>
-            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-indigo-600 leading-none">v5</span>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-indigo-600 leading-none">v6</span>
           </div>
           <p class="text-[10px] text-slate-400 font-medium">Habits & Gamified Worlds</p>
         </div>
@@ -68,9 +68,9 @@
     <!-- GOALS GRID -->
     <section>
       <div id="goalsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-      <div id="emptyState" class="hidden glass-card rounded-3xl p-10 text-center max-w-sm mx-auto my-6">
+      <div id="emptyState" class="hidden rounded-3xl p-10 text-center max-w-sm mx-auto my-6 bg-white border-2 border-dashed border-slate-300 shadow-sm">
         <div class="text-5xl mb-3">🌱</div>
-        <h3 class="text-base font-bold text-slate-700 dark:text-slate-200">No goals yet</h3>
+        <h3 class="text-base font-bold text-slate-800">No goals yet</h3>
         <p class="text-xs text-slate-500 mt-1">Tap "+ New Goal" above to start!</p>
       </div>
     </section>
@@ -78,14 +78,14 @@
 
   <!-- FOOTER -->
   <footer class="py-4 text-center text-[10px] text-slate-400">
-    Streak Universe • <span class="font-semibold text-slate-500">v5</span>
+    Streak Universe • <span class="font-semibold text-slate-500">v6</span>
   </footer>
 
   <!-- ============================================================
        MODAL 1: CREATE / EDIT GOAL
        ============================================================ -->
   <div id="goalModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-    <div class="glass-modal w-full sm:max-w-lg max-h-[90vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 transform translate-y-8 transition-transform duration-200" id="goalModalBox">
+    <div class="glass-modal w-full sm:max-w-lg max-h-[90vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-200 transform translate-y-8 transition-transform duration-200" id="goalModalBox">
       
       <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
         <h3 id="goalModalTitle" class="text-base font-black text-slate-800">🎯 New Goal</h3>
@@ -192,10 +192,10 @@
        MODAL 2: WORLD VIEW
        ============================================================ -->
   <div id="worldModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-    <div class="glass-modal w-full sm:max-w-3xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 transform translate-y-8 transition-transform duration-200" id="worldModalBox">
+    <div class="glass-modal w-full sm:max-w-3xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl overflow-hidden border border-slate-200 transform translate-y-8 transition-transform duration-200" id="worldModalBox">
       
       <!-- Header -->
-      <div id="worldHeaderBanner" class="p-4 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between transition-colors duration-300">
+      <div id="worldHeaderBanner" class="p-4 border-b border-slate-200 flex items-center justify-between transition-colors duration-300">
         <div class="flex items-center gap-2.5">
           <span id="worldThemeIcon" class="text-3xl animate-bounce">🌱</span>
           <div>
@@ -241,8 +241,11 @@
         </div>
 
         <!-- Legend -->
-        <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200">
-          <p class="text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-2">Tiers</p>
+        <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] font-extrabold text-slate-700 uppercase tracking-wide">Tiers Progression</p>
+            <span class="text-[10px] font-medium text-slate-400">Live / Missed</span>
+          </div>
           <div id="worldLegendContent" class="grid grid-cols-5 gap-1.5 text-xs"></div>
         </div>
       </div>
@@ -262,8 +265,8 @@
     <div class="flex items-center gap-2">
       <span class="text-xl">📲</span>
       <div>
-        <p class="text-xs font-bold text-slate-800 dark:text-white">Install App</p>
-        <p class="text-[10px] text-slate-500 dark:text-slate-300">Add to Home Screen for offline use</p>
+        <p class="text-xs font-bold text-slate-800">Install App</p>
+        <p class="text-[10px] text-slate-500">Add to Home Screen for offline use</p>
       </div>
     </div>
     <div class="flex items-center gap-1.5">
@@ -272,6 +275,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

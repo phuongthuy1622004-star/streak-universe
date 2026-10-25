@@ -1,4 +1,4 @@
-const APP_VERSION = '5';
+const APP_VERSION = '6';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -832,17 +832,27 @@ class AppController {
   }
 
   _renderLegend(cfg) {
+    const themeStyles = {
+      garden:   { box: 'bg-emerald-50/90 border-2 border-emerald-300 hover:border-emerald-400', badge: 'bg-emerald-100 text-emerald-800' },
+      zoo:      { box: 'bg-amber-50/90 border-2 border-amber-300 hover:border-amber-400',       badge: 'bg-amber-100 text-amber-800' },
+      aquarium: { box: 'bg-sky-50/90 border-2 border-sky-300 hover:border-sky-400',           badge: 'bg-sky-100 text-sky-800' },
+      candy:    { box: 'bg-pink-50/90 border-2 border-pink-300 hover:border-pink-400',         badge: 'bg-pink-100 text-pink-800' }
+    };
+    const currentThemeKey = Object.keys(THEME_CONFIGS).find(k => THEME_CONFIGS[k] === cfg) || 'garden';
+    const st = themeStyles[currentThemeKey] || themeStyles.garden;
+
     this.worldLegendContent.innerHTML = [1, 5, 10, 15, 100].map(t => {
       const pool = cfg.tiers[t];
       const live = pool?.[0] ?? '🌱';
       const dead = cfg.dead[t] ?? { emoji: '🌾' };
       return `
-        <div class="p-2 rounded-xl bg-white dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-center flex flex-col items-center">
-          <div class="flex items-center gap-1 text-lg mb-0.5">
-            <span>${live}</span><span class="text-[9px] text-slate-300">/</span><span class="opacity-60">${dead.emoji}</span>
+        <div class="py-2.5 px-1 rounded-xl ${st.box} shadow-xs text-center flex flex-col items-center justify-center transition-transform hover:scale-105">
+          <div class="flex items-center justify-center gap-1 text-xl mb-1">
+            <span class="select-none">${live}</span>
+            <span class="text-[9px] text-slate-300 font-bold">/</span>
+            <span class="select-none opacity-60">${dead.emoji}</span>
           </div>
-          <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400">${t}d</span>
-          <span class="text-[9px] text-slate-400 truncate max-w-full">${cfg.labels[t]}</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${st.badge}">${t}d</span>
         </div>`;
     }).join('');
   }
