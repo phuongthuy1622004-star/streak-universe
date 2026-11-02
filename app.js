@@ -1,4 +1,4 @@
-const APP_VERSION = '12';
+const APP_VERSION = '13';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -347,11 +347,12 @@ class FirebaseSync {
 // ==========================================================================
 class AppStorage {
   static KEY = 'streak_universe_device_id';
+  static DEFAULT_DEVICE_ID = 'dev_mvnqpqiu_lqtu2b';
 
   static getDeviceId() {
     let id = localStorage.getItem(this.KEY);
     if (!id) {
-      id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 8);
+      id = this.DEFAULT_DEVICE_ID;
       localStorage.setItem(this.KEY, id);
     }
     return id;
@@ -363,9 +364,26 @@ class AppStorage {
 
   /** Load goals from Firebase RTDB */
   static async loadGoals() {
-    const resp = await fetch(this._endpoint());
+    let resp = await fetch(this._endpoint());
     if (!resp.ok) throw new Error(`Load failed: ${resp.status}`);
-    const raw = await resp.json();
+    let raw = await resp.json();
+
+    // Auto-reconnect to primary user if current device ID has no goals
+    if ((!raw || (Array.isArray(raw) && raw.length === 0)) && this.getDeviceId() !== this.DEFAULT_DEVICE_ID) {
+      try {
+        const fallbackResp = await fetch(`${FirebaseSync.DB_URL}/users/${this.DEFAULT_DEVICE_ID}/goals.json`);
+        if (fallbackResp.ok) {
+          const fallbackRaw = await fallbackResp.json();
+          if (fallbackRaw && (Array.isArray(fallbackRaw) ? fallbackRaw.length > 0 : Object.keys(fallbackRaw).length > 0)) {
+            localStorage.setItem(this.KEY, this.DEFAULT_DEVICE_ID);
+            raw = fallbackRaw;
+          }
+        }
+      } catch (e) {
+        console.warn('Fallback check failed:', e);
+      }
+    }
+
     if (!raw) return [];
     return Array.isArray(raw) ? raw.filter(Boolean) : Object.values(raw).filter(Boolean);
   }
