@@ -1,4 +1,4 @@
-const APP_VERSION = '11';
+const APP_VERSION = '12';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -286,7 +286,7 @@ class StreakEngine {
               type: 'healthy',
               tier,
               emoji,
-              label: `${tier}x`,
+              label: `${tier}t`,
               date: d,
               title: `${tier} ${tier === 1 ? 'time' : 'times'}`
             });
@@ -302,7 +302,7 @@ class StreakEngine {
             type: 'healthy',
             tier: 1,
             emoji,
-            label: '1x',
+            label: '1t',
             date: d,
             title: '1 time'
           });
@@ -594,12 +594,8 @@ class AppController {
       const cfg  = THEME_CONFIGS[goal.theme] ?? THEME_CONFIGS.garden;
       const icon = cfg.icon;
       const cur  = goal.streak?.current_streak  ?? 0;
-      const lng  = goal.streak?.longest_streak  ?? 0;
       const cat  = CATS[goal.category] ?? CATS.other;
-      const freq = parseInt(goal.frequency, 10) || 1;
-      const freqLabel = freq === 1 ? 'Every day' : `Every ${freq} days`;
       const themeClass = 'card-theme-' + (goal.theme || 'garden');
-      const iconCls = THEME_ICON_CLS[goal.theme] || THEME_ICON_CLS.garden;
 
       let dlBadge = '';
       if (goal.deadline) {
@@ -609,31 +605,21 @@ class AppController {
         else               dlBadge = `<span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold">${diff}d left</span>`;
       }
 
-      const targetTxt = goal.daily_target
-        ? `<strong>Target:</strong> ${this.esc(goal.daily_target)}`
-        : `<strong>Target:</strong> Tick ✓`;
-
       return `
         <div class="${themeClass} rounded-2xl p-4 sm:p-5 flex flex-col gap-3 transition-all duration-200 group">
           <div class="flex items-start justify-between gap-2">
             <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-xl p-1.5 rounded-xl border shadow-sm ${iconCls}">${icon}</span>
               <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${cat.cls}">${cat.label}</span>
-              ${dlBadge}
+              ${goal.daily_target ? `<span class="text-[11px] font-medium text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">🎯 ${this.esc(goal.daily_target)}</span>` : ''}
             </div>
             <div class="flex gap-1 shrink-0">
-              <button onclick="app.openEditGoal('${goal.id}')" title="Edit goal" class="w-7 h-7 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white/80 flex items-center justify-center text-xs transition">✏️</button>
-              <button onclick="app.deleteGoal('${goal.id}')" title="Delete goal" class="w-7 h-7 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-white/80 flex items-center justify-center text-xs transition">🗑️</button>
+              <button onclick="app.openEditGoal('${goal.id}')" title="Edit goal" class="w-7 h-7 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 flex items-center justify-center text-xs transition">✏️</button>
+              <button onclick="app.deleteGoal('${goal.id}')" title="Delete goal" class="w-7 h-7 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center text-xs transition">🗑️</button>
             </div>
           </div>
 
           <div>
             <h3 class="text-base font-extrabold text-slate-800 tracking-tight leading-snug">${this.esc(goal.title)}</h3>
-            <div class="flex items-center gap-2 flex-wrap text-xs text-slate-600 mt-1.5">
-              <span>${targetTxt}</span>
-              <span class="text-slate-300">•</span>
-              <span class="font-semibold text-slate-700">📅 ${freqLabel}</span>
-            </div>
             ${goal.deadline ? `
               <div class="mt-2 text-[11px] font-medium text-slate-600 flex items-center justify-between bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200">
                 <span>Deadline: <strong class="text-slate-800 font-semibold">${goal.deadline}</strong></span>
@@ -643,25 +629,20 @@ class AppController {
           </div>
 
           <div class="flex items-center justify-between pt-2.5 border-t border-slate-200/60">
-            <div class="flex items-center gap-2.5">
-              <div class="w-10 h-10 rounded-xl bg-amber-100/90 border border-amber-300 flex items-center justify-center text-lg ${cur > 0 ? 'flame-glow' : 'opacity-60'}">🔥</div>
-              <div>
-                <div class="text-base font-black text-amber-700 leading-tight">${cur} <span class="text-[11px] font-bold text-slate-500">${cur === 1 ? 'time' : 'times'}</span></div>
-                <div class="text-[10px] text-slate-500 font-medium">Best: <strong class="text-rose-600 font-bold">${lng} ${lng === 1 ? 'time' : 'times'}</strong></div>
+            <button onclick="app.openWorldModal('${goal.id}')" title="Open ${cfg.name}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs hover:bg-slate-50 transition active:scale-95 group/btn">
+              <span class="text-xl select-none">${icon}</span>
+              <div class="text-left flex items-baseline gap-1.5">
+                <span class="text-sm font-black text-slate-800 leading-none">${cur}t</span>
+                <span class="text-[10px] font-bold text-slate-400 group-hover/btn:text-indigo-600 transition-colors">${cfg.name}</span>
               </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="app.openWorldModal('${goal.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/90 hover:bg-white text-slate-700 border border-slate-200/90 shadow-sm flex items-center gap-1.5 transition active:scale-95">
-                <span>${icon}</span> <span>World</span>
-              </button>
-              <button onclick="app.toggleCheckIn('${goal.id}')" title="${done ? 'Click to undo' : 'Check-in today'}" class="streak-check-btn px-3.5 py-1.5 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm active:scale-95 ${
-                done
-                  ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-300 hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300'
-                  : 'bg-gradient-to-r from-amber-500 via-rose-500 to-pink-500 hover:opacity-95 text-white shadow-rose-500/25'
-              }">
-                ${done ? '✓ Done' : 'Check-in 🔥'}
-              </button>
-            </div>
+            </button>
+            <button onclick="app.toggleCheckIn('${goal.id}')" title="${done ? 'Click to undo' : 'Check-in today'}" class="streak-check-btn px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm active:scale-95 ${
+              done
+                ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-300 hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300'
+                : 'bg-gradient-to-r from-amber-500 via-rose-500 to-pink-500 hover:opacity-95 text-white shadow-rose-500/25'
+            }">
+              ${done ? '✓ Done' : 'Check-in 🔥'}
+            </button>
           </div>
         </div>`;
     }).join('');
@@ -819,8 +800,8 @@ class AppController {
     const cur = goal.streak?.current_streak ?? 0;
     const lng = goal.streak?.longest_streak ?? 0;
     const freq = parseInt(goal.frequency, 10) || 1;
-    this.worldCurrentStreak.textContent = `${cur} ${cur === 1 ? 'time' : 'times'}`;
-    this.worldLongestStreak.textContent = `${lng} ${lng === 1 ? 'time' : 'times'}`;
+    this.worldCurrentStreak.textContent = `${cur}t`;
+    this.worldLongestStreak.textContent = `${lng}t`;
     if (this.worldGraceText) {
       this.worldGraceText.textContent = freq === 1 ? '1-Day 🛡️' : `${freq}d Grace 🛡️`;
     }
@@ -882,7 +863,7 @@ class AppController {
             <span class="text-[9px] text-slate-300 font-bold">/</span>
             <span class="select-none opacity-60">${dead.emoji}</span>
           </div>
-          <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${st.badge}">${t} ${t === 1 ? 'time' : 'times'}</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${st.badge}">${t}t</span>
         </div>`;
     }).join('');
   }
