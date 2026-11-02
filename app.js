@@ -1,4 +1,4 @@
-const APP_VERSION = '17';
+const APP_VERSION = '18';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -723,7 +723,7 @@ class AppController {
       this.renderGoals();
       AppStorage.saveGoals(this.goals).catch(e => this.showToast('⚠️ Save failed: ' + e.message));
 
-      if (res.graceApplied) this.showToast('🛡️ Grace period! Streak protected.');
+      if (res.graceApplied) this.showToast('Grace period! Streak protected.');
     }
   }
 
@@ -844,7 +844,7 @@ class AppController {
     this.worldCurrentStreak.textContent = `${cur}t`;
     this.worldLongestStreak.textContent = `${lng}t`;
     if (this.worldGraceText) {
-      this.worldGraceText.textContent = freq === 1 ? '1-Day 🛡️' : `${freq}d Grace 🛡️`;
+      this.worldGraceText.textContent = freq === 1 ? '1d' : `${freq}d`;
     }
 
     const items = StreakEngine.generateWorldItems(goal.streak_dates ?? [], goal.theme, freq);
