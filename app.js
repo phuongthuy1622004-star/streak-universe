@@ -1,4 +1,4 @@
-const APP_VERSION = '13';
+const APP_VERSION = '14';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -254,8 +254,8 @@ class StreakEngine {
     return { current_streak: active, longest_streak: max, last_completed_date: last };
   }
 
-  /** Section 6: Greedy tier decomposition → world grid items based on times (frequency) */
-  static generateWorldItems(dates, themeKey = 'garden', frequency = 1) {
+  /** Section 6: Tier decomposition → world grid items with dead slots for all missed gaps */
+  static generateWorldItems(dates, themeKey = 'garden', frequency = 1, today = new Date()) {
     if (!dates?.length) return [];
     const sorted = [...new Set(dates)].sort();
     const cfg = THEME_CONFIGS[themeKey] ?? THEME_CONFIGS.garden;
@@ -270,9 +270,10 @@ class StreakEngine {
         gapDays = this.diffDays(this.parseDate(sorted[i-1]), this.parseDate(sorted[i]));
       }
 
-      const isBreak = !isLast && gapDays > (2 * freq);
+      // Any gap greater than frequency means one or more days/cycles were missed
+      const hasGap = !isLast && gapDays > freq;
 
-      if (isBreak || isLast) {
+      if (hasGap || isLast) {
         const run = sorted.slice(runStart, i);
         let remaining = run.length, idx = 0;
 
@@ -308,28 +309,56 @@ class StreakEngine {
           });
         }
 
-        if (isBreak) {
-          const missedCycles = Math.max(1, Math.floor(gapDays / freq) - 1);
+        if (hasGap) {
+          const missedCount = freq === 1 ? (gapDays - 1) : Math.max(1, Math.floor((gapDays - 1) / freq));
           let dt = 1;
-          if (missedCycles >= 100) dt = 100;
-          else if (missedCycles >= 15) dt = 15;
-          else if (missedCycles >= 10) dt = 10;
-          else if (missedCycles >= 5)  dt = 5;
+          if (missedCount >= 100) dt = 100;
+          else if (missedCount >= 15) dt = 15;
+          else if (missedCount >= 10) dt = 10;
+          else if (missedCount >= 5)  dt = 5;
 
           const dead = cfg.dead[dt] ?? { emoji: '🌾', name: 'Miss' };
+          const unit = freq === 1 ? (missedCount === 1 ? 'day' : 'days') : (missedCount === 1 ? 'cycle' : 'cycles');
           items.push({
             type: 'dead',
             tier: dt,
             emoji: dead.emoji,
-            label: `${missedCycles}m`,
+            label: `${missedCount}m`,
             gapDays,
-            title: `Missed ${missedCycles} ${missedCycles === 1 ? 'time' : 'times'} (${gapDays} days)`,
-            dateDesc: `${run[run.length-1]} → ${sorted[i]}`
+            title: `Missed ${missedCount} ${unit} (${dead.name})`,
+            dateDesc: `${sorted[i-1]} → ${sorted[i]}`
           });
           runStart = i;
         }
       }
     }
+
+    // Check if user has missed days from last completion up to today (beyond grace)
+    if (sorted.length > 0) {
+      const last = sorted[sorted.length - 1];
+      const gapToNow = this.diffDays(this.parseDate(last), today);
+      if (gapToNow > (2 * freq)) {
+        const missedNow = freq === 1 ? (gapToNow - 1) : Math.max(1, Math.floor((gapToNow - 1) / freq));
+        let dt = 1;
+        if (missedNow >= 100) dt = 100;
+        else if (missedNow >= 15) dt = 15;
+        else if (missedNow >= 10) dt = 10;
+        else if (missedNow >= 5)  dt = 5;
+
+        const dead = cfg.dead[dt] ?? { emoji: '🌾', name: 'Miss' };
+        const unit = freq === 1 ? (missedNow === 1 ? 'day' : 'days') : (missedNow === 1 ? 'cycle' : 'cycles');
+        items.push({
+          type: 'dead',
+          tier: dt,
+          emoji: dead.emoji,
+          label: `${missedNow}m`,
+          gapDays: gapToNow,
+          title: `Current Miss: ${missedNow} ${unit} (${dead.name})`,
+          dateDesc: `Since ${last}`
+        });
+      }
+    }
+
     return items;
   }
 }
