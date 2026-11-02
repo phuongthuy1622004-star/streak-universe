@@ -1,4 +1,4 @@
-const APP_VERSION = '15';
+const APP_VERSION = '16';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -859,7 +859,7 @@ class AppController {
     } else {
       this.worldSlotsGrid.innerHTML = items.map((item, i) => `
         <div class="world-slot ${item.type} tier-${item.tier} animate-pop-in" style="animation-delay:${Math.min(i*0.02,0.6)}s">
-          <span class="text-2xl sm:text-3xl select-none">${item.emoji}</span>
+          <span class="text-xl sm:text-2xl select-none leading-none">${item.emoji}</span>
           <span class="slot-badge">${item.label}</span>
         </div>`).join('');
     }

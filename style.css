@@ -138,23 +138,23 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 1rem;
-  padding: 0.65rem 0.4rem;
+  border-radius: 0.85rem;
+  padding: 0.35rem 0.2rem;
   position: relative;
-  cursor: pointer;
+  cursor: default;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 80px;
-  box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.05);
+  min-height: 58px;
+  box-shadow: 0 2px 5px -1px rgba(0, 0, 0, 0.05);
 }
 
 .world-slot:hover {
-  transform: translateY(-4px) scale(1.05);
+  transform: translateY(-2px) scale(1.04);
   z-index: 10;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.08);
 }
 
 .world-slot:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
 /* Healthy Slots (Light Pastel) */
@@ -199,13 +199,14 @@ body {
 
 /* Slot Badge */
 .slot-badge {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 800;
-  padding: 0.12rem 0.45rem;
+  padding: 0.08rem 0.35rem;
   border-radius: 9999px;
-  margin-top: 0.3rem;
+  margin-top: 0.15rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.2px;
+  line-height: 1;
 }
 
 .healthy .slot-badge {
