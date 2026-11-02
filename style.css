@@ -204,7 +204,7 @@ body {
   padding: 0.08rem 0.35rem;
   border-radius: 9999px;
   margin-top: 0.15rem;
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 0.2px;
   line-height: 1;
 }
