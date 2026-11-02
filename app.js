@@ -1,4 +1,4 @@
-const APP_VERSION = '14';
+const APP_VERSION = '15';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -484,12 +484,7 @@ class AppController {
     this.worldGraceText    = document.getElementById('worldGraceText');
     this.worldSlotsGrid    = document.getElementById('worldSlotsGrid');
     this.worldLegendContent= document.getElementById('worldLegendContent');
-    this.slotDetailBox     = document.getElementById('slotDetailBox');
-    this.slotDetailEmoji   = document.getElementById('slotDetailEmoji');
-    this.slotDetailTitle   = document.getElementById('slotDetailTitle');
-    this.slotDetailDesc    = document.getElementById('slotDetailDesc');
     this.btnCloseWorld     = document.getElementById('btnCloseWorldModal');
-    this.btnWorldDone      = document.getElementById('btnWorldDone');
 
     // PWA
     this.pwaInstallBanner = document.getElementById('pwaInstallBanner');
@@ -521,7 +516,6 @@ class AppController {
 
     // World modal
     this.btnCloseWorld.addEventListener('click', () => this.closeWorldModal());
-    this.btnWorldDone.addEventListener('click',  () => this.closeWorldModal());
 
     // PWA
     window.addEventListener('beforeinstallprompt', e => {
@@ -855,7 +849,6 @@ class AppController {
 
     const items = StreakEngine.generateWorldItems(goal.streak_dates ?? [], goal.theme, freq);
     this.currentWorldItems = items;
-    this.slotDetailBox.classList.add('hidden');
 
     if (!items.length) {
       this.worldSlotsGrid.innerHTML = `
@@ -865,7 +858,7 @@ class AppController {
         </div>`;
     } else {
       this.worldSlotsGrid.innerHTML = items.map((item, i) => `
-        <div class="world-slot ${item.type} tier-${item.tier} animate-pop-in" style="animation-delay:${Math.min(i*0.02,0.6)}s" onclick="app.selectSlot(${i})">
+        <div class="world-slot ${item.type} tier-${item.tier} animate-pop-in" style="animation-delay:${Math.min(i*0.02,0.6)}s">
           <span class="text-2xl sm:text-3xl select-none">${item.emoji}</span>
           <span class="slot-badge">${item.label}</span>
         </div>`).join('');
@@ -875,18 +868,6 @@ class AppController {
 
     this.worldModal.classList.remove('opacity-0', 'pointer-events-none');
     this.worldModalBox.classList.remove('translate-y-8');
-  }
-
-  selectSlot(i) {
-    const item = this.currentWorldItems[i];
-    if (!item) return;
-    SoundFX.playPop();
-    this.slotDetailBox.classList.remove('hidden');
-    this.slotDetailEmoji.textContent = item.emoji;
-    this.slotDetailTitle.textContent = item.title;
-    this.slotDetailDesc.textContent  = item.type === 'healthy'
-      ? `Completed on ${item.date} (${item.label})`
-      : `${item.dateDesc} — ${item.gapDays} days missed`;
   }
 
   _renderLegend(cfg) {
