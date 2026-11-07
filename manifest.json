@@ -1,11 +1,11 @@
 {
-  "name": "Streak Universe - Habit & World Tracker",
-  "short_name": "StreakWorld",
-  "description": "Theo dõi thói quen, duy trì chuỗi Streak và xây dựng Khu Vườn / Thế Giới kỳ diệu của riêng bạn!",
+  "name": "james",
+  "short_name": "james",
+  "description": "james - Habit & Streak Tracker",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#6366f1",
+  "background_color": "#f8fafc",
+  "theme_color": "#f8fafc",
   "orientation": "portrait-primary",
   "icons": [
     {
