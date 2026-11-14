@@ -1,4 +1,4 @@
-const APP_VERSION = '22';
+const APP_VERSION = '23';
 window.APP_VERSION = APP_VERSION;
 /**
  * STREAK UNIVERSE - HABIT & WORLD TRACKER
@@ -187,6 +187,36 @@ class StreakEngine {
     return Math.round((b - a) / 86400000);
   }
 
+  /** Count how many scheduled days fall strictly between date1 and date2 (exclusive of both) */
+  static countScheduledDaysBetween(date1, date2, scheduledDays) {
+    if (!scheduledDays?.length) return 0;
+    const set = new Set(scheduledDays.map(Number));
+    let count = 0;
+    const d = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    d.setDate(d.getDate() + 1);
+    const end = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    while (d < end) {
+      if (set.has(d.getDay())) count++;
+      d.setDate(d.getDate() + 1);
+    }
+    return count;
+  }
+
+  /** Count how many scheduled days fall between date1 (exclusive) and date2 (inclusive) */
+  static countScheduledDaysToNow(date1, date2, scheduledDays) {
+    if (!scheduledDays?.length) return 0;
+    const set = new Set(scheduledDays.map(Number));
+    let count = 0;
+    const d = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    d.setDate(d.getDate() + 1);
+    const end = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    while (d <= end) {
+      if (set.has(d.getDay())) count++;
+      d.setDate(d.getDate() + 1);
+    }
+    return count;
+  }
+
   static hashEmoji(pool, seed) {
     if (!pool?.length) return '⭐';
     let h = 0;
@@ -199,20 +229,34 @@ class StreakEngine {
     const todayStr = this.formatDate(today);
     if (goal.streak?.last_completed_date === todayStr) return { isNewDay: false, graceApplied: false };
 
-    const freq = parseInt(goal.frequency, 10) || 1;
+    const isDaysMode = goal.frequency === 'days' && Array.isArray(goal.frequency_days) && goal.frequency_days.length > 0;
+    const freq = isDaysMode ? 1 : (parseInt(goal.frequency, 10) || 1);
     let next = goal.streak?.current_streak ?? 0;
     let graceApplied = false;
     const last = goal.streak?.last_completed_date ?? null;
 
     if (last) {
-      const diff = this.diffDays(this.parseDate(last), today);
-      if (diff <= freq) {
-        next += 1;
-      } else if (diff <= (2 * freq)) {
-        next += 1;
-        graceApplied = true;
+      if (isDaysMode) {
+        const lastDate = this.parseDate(last);
+        const missed = this.countScheduledDaysBetween(lastDate, today, goal.frequency_days);
+        if (missed === 0) {
+          next += 1;
+        } else if (missed === 1) {
+          next += 1;
+          graceApplied = true;
+        } else {
+          next = 1;
+        }
       } else {
-        next = 1;
+        const diff = this.diffDays(this.parseDate(last), today);
+        if (diff <= freq) {
+          next += 1;
+        } else if (diff <= (2 * freq)) {
+          next += 1;
+          graceApplied = true;
+        } else {
+          next = 1;
+        }
       }
     } else {
       next = 1;
@@ -233,45 +277,78 @@ class StreakEngine {
     if (!goal.streak?.last_completed_date) return;
     const last = this.parseDate(goal.streak.last_completed_date);
     if (!last) return;
-    const freq = parseInt(goal.frequency, 10) || 1;
-    if (this.diffDays(last, today) > (2 * freq) && goal.streak.current_streak > 0)
-      goal.streak.current_streak = 0;
+
+    const isDaysMode = goal.frequency === 'days' && Array.isArray(goal.frequency_days) && goal.frequency_days.length > 0;
+    if (isDaysMode) {
+      const missedToNow = this.countScheduledDaysToNow(last, today, goal.frequency_days);
+      const isTodayScheduled = goal.frequency_days.includes(today.getDay());
+      const missedPast = isTodayScheduled ? (missedToNow - 1) : missedToNow;
+      if (missedPast > 1 && goal.streak.current_streak > 0) {
+        goal.streak.current_streak = 0;
+      }
+    } else {
+      const freq = parseInt(goal.frequency, 10) || 1;
+      if (this.diffDays(last, today) > (2 * freq) && goal.streak.current_streak > 0)
+        goal.streak.current_streak = 0;
+    }
   }
 
   /** Section 4: Recalculate streak from dates with frequency */
-  static recalculateStreakFromDates(dates, frequency = 1, today = new Date()) {
+  static recalculateStreakFromDates(dates, frequency = 1, today = new Date(), frequencyDays = null) {
     if (!dates?.length) return { current_streak: 0, longest_streak: 0, last_completed_date: '' };
     const sorted = [...new Set(dates)].sort();
+    const isDaysMode = frequency === 'days' && Array.isArray(frequencyDays) && frequencyDays.length > 0;
     const freq = parseInt(frequency, 10) || 1;
     let cur = 1, max = 1;
     for (let i = 1; i < sorted.length; i++) {
-      const d = this.diffDays(this.parseDate(sorted[i-1]), this.parseDate(sorted[i]));
-      if (d <= (2 * freq)) { cur++; } else { cur = 1; }
+      if (isDaysMode) {
+        const missed = this.countScheduledDaysBetween(this.parseDate(sorted[i-1]), this.parseDate(sorted[i]), frequencyDays);
+        if (missed <= 1) { cur++; } else { cur = 1; }
+      } else {
+        const d = this.diffDays(this.parseDate(sorted[i-1]), this.parseDate(sorted[i]));
+        if (d <= (2 * freq)) { cur++; } else { cur = 1; }
+      }
       max = Math.max(max, cur);
     }
     const last = sorted[sorted.length - 1];
-    const active = this.diffDays(this.parseDate(last), today) > (2 * freq) ? 0 : cur;
+    let active = cur;
+    if (isDaysMode) {
+      const missedToNow = this.countScheduledDaysToNow(this.parseDate(last), today, frequencyDays);
+      const isTodayScheduled = frequencyDays.includes(today.getDay());
+      const missedPast = isTodayScheduled ? (missedToNow - 1) : missedToNow;
+      if (missedPast > 1) active = 0;
+    } else {
+      active = this.diffDays(this.parseDate(last), today) > (2 * freq) ? 0 : cur;
+    }
     return { current_streak: active, longest_streak: max, last_completed_date: last };
   }
 
   /** Section 6: Tier decomposition → world grid items with dead slots for all missed gaps */
-  static generateWorldItems(dates, themeKey = 'garden', frequency = 1, today = new Date()) {
+  static generateWorldItems(dates, themeKey = 'garden', frequency = 1, today = new Date(), frequencyDays = null) {
     if (!dates?.length) return [];
     const sorted = [...new Set(dates)].sort();
     const cfg = THEME_CONFIGS[themeKey] ?? THEME_CONFIGS.garden;
     const items = [];
-    const freq = parseInt(frequency, 10) || 1;
+    const isDaysMode = frequency === 'days' && Array.isArray(frequencyDays) && frequencyDays.length > 0;
+    const freq = isDaysMode ? 1 : (parseInt(frequency, 10) || 1);
     let runStart = 0;
 
     for (let i = 1; i <= sorted.length; i++) {
       const isLast = i === sorted.length;
+      let missedCount = 0;
+      let hasGap = false;
       let gapDays = 0;
+
       if (!isLast) {
         gapDays = this.diffDays(this.parseDate(sorted[i-1]), this.parseDate(sorted[i]));
+        if (isDaysMode) {
+          missedCount = this.countScheduledDaysBetween(this.parseDate(sorted[i-1]), this.parseDate(sorted[i]), frequencyDays);
+          hasGap = missedCount > 0;
+        } else {
+          hasGap = gapDays > freq;
+          missedCount = freq === 1 ? (gapDays - 1) : Math.max(1, Math.floor((gapDays - 1) / freq));
+        }
       }
-
-      // Any gap greater than frequency means one or more days/cycles were missed
-      const hasGap = !isLast && gapDays > freq;
 
       if (hasGap || isLast) {
         const run = sorted.slice(runStart, i);
@@ -310,7 +387,6 @@ class StreakEngine {
         }
 
         if (hasGap) {
-          const missedCount = freq === 1 ? (gapDays - 1) : Math.max(1, Math.floor((gapDays - 1) / freq));
           let dt = 1;
           if (missedCount >= 100) dt = 100;
           else if (missedCount >= 15) dt = 15;
@@ -318,7 +394,9 @@ class StreakEngine {
           else if (missedCount >= 5)  dt = 5;
 
           const dead = cfg.dead[dt] ?? { emoji: '🌾', name: 'Miss' };
-          const unit = freq === 1 ? (missedCount === 1 ? 'day' : 'days') : (missedCount === 1 ? 'cycle' : 'cycles');
+          const unit = isDaysMode
+            ? (missedCount === 1 ? 'day' : 'days')
+            : (freq === 1 ? (missedCount === 1 ? 'day' : 'days') : (missedCount === 1 ? 'cycle' : 'cycles'));
           items.push({
             type: 'dead',
             tier: dt,
@@ -336,9 +414,26 @@ class StreakEngine {
     // Check if user has missed days from last completion up to today (beyond grace)
     if (sorted.length > 0) {
       const last = sorted[sorted.length - 1];
+      let missedNow = 0;
+      let shouldShowCurrentMiss = false;
       const gapToNow = this.diffDays(this.parseDate(last), today);
-      if (gapToNow > (2 * freq)) {
-        const missedNow = freq === 1 ? (gapToNow - 1) : Math.max(1, Math.floor((gapToNow - 1) / freq));
+
+      if (isDaysMode) {
+        const missedToNow = this.countScheduledDaysToNow(this.parseDate(last), today, frequencyDays);
+        const isTodayScheduled = frequencyDays.includes(today.getDay());
+        const missedPast = isTodayScheduled ? (missedToNow - 1) : missedToNow;
+        if (missedPast > 1) {
+          shouldShowCurrentMiss = true;
+          missedNow = missedPast;
+        }
+      } else {
+        if (gapToNow > (2 * freq)) {
+          shouldShowCurrentMiss = true;
+          missedNow = freq === 1 ? (gapToNow - 1) : Math.max(1, Math.floor((gapToNow - 1) / freq));
+        }
+      }
+
+      if (shouldShowCurrentMiss) {
         let dt = 1;
         if (missedNow >= 100) dt = 100;
         else if (missedNow >= 15) dt = 15;
@@ -346,7 +441,9 @@ class StreakEngine {
         else if (missedNow >= 5)  dt = 5;
 
         const dead = cfg.dead[dt] ?? { emoji: '🌾', name: 'Miss' };
-        const unit = freq === 1 ? (missedNow === 1 ? 'day' : 'days') : (missedNow === 1 ? 'cycle' : 'cycles');
+        const unit = isDaysMode
+          ? (missedNow === 1 ? 'day' : 'days')
+          : (freq === 1 ? (missedNow === 1 ? 'day' : 'days') : (missedNow === 1 ? 'cycle' : 'cycles'));
         items.push({
           type: 'dead',
           tier: dt,
@@ -471,6 +568,8 @@ class AppController {
     this.formDailyTarget  = document.getElementById('formDailyTarget');
     this.formFrequency    = document.getElementById('formFrequency');
     this.formDeadline     = document.getElementById('formDeadline');
+    this.weekdaySelectContainer = document.getElementById('weekdaySelectContainer');
+    this.weekdayButtons   = document.querySelectorAll('.weekday-btn');
 
     // World modal
     this.worldModal        = document.getElementById('worldModal');
@@ -498,6 +597,23 @@ class AppController {
     this.btnCloseGoal.addEventListener('click',  () => this.closeGoalModal());
     this.btnCancelGoal.addEventListener('click', () => this.closeGoalModal());
     this.goalForm.addEventListener('submit', e => this.handleGoalFormSubmit(e));
+
+    // Frequency change
+    this.formFrequency.addEventListener('change', () => {
+      if (this.formFrequency.value === 'days') {
+        this.weekdaySelectContainer?.classList.remove('hidden');
+      } else {
+        this.weekdaySelectContainer?.classList.add('hidden');
+      }
+    });
+
+    // Weekday toggle
+    this.weekdayButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('selected');
+        this._styleWeekdayButtons();
+      });
+    });
 
     // Target mode select
     this.formTargetMode.addEventListener('change', () => {
@@ -638,6 +754,20 @@ class AppController {
       const cat  = CATS[goal.category] ?? CATS.other;
       const themeClass = 'card-theme-' + (goal.theme || 'garden');
 
+      const isDays = goal.frequency === 'days';
+      const todayDay = new Date().getDay();
+      const isScheduledToday = isDays
+        ? (Array.isArray(goal.frequency_days) && goal.frequency_days.length > 0 ? goal.frequency_days.includes(todayDay) : true)
+        : true;
+
+      const DAY_NAMES_SHORT = { 0: 'Sun', 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
+      let daysBadge = '';
+      if (isDays && Array.isArray(goal.frequency_days) && goal.frequency_days.length > 0) {
+        const sortedDays = [...goal.frequency_days].sort((a,b) => ((a===0?7:a)-(b===0?7:b)));
+        const daysStr = sortedDays.map(d => DAY_NAMES_SHORT[d]).join(', ');
+        daysBadge = `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">🗓️ ${daysStr}</span>`;
+      }
+
       let dlBadge = '';
       if (goal.deadline) {
         const diff = StreakEngine.diffDays(new Date(), StreakEngine.parseDate(goal.deadline));
@@ -651,6 +781,7 @@ class AppController {
           <div class="flex items-start justify-between gap-2">
             <div class="flex items-center gap-2 flex-wrap">
               <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${cat.cls}">${cat.label}</span>
+              ${daysBadge}
               ${goal.daily_target ? `<span class="text-[11px] font-medium text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">🎯 ${this.esc(goal.daily_target)}</span>` : ''}
             </div>
             <div class="flex gap-1 shrink-0">
@@ -677,12 +808,18 @@ class AppController {
                 <span class="text-[10px] font-bold text-slate-400 group-hover/btn:text-indigo-600 transition-colors">${cfg.name}</span>
               </div>
             </button>
-            <button onclick="app.toggleCheckIn('${goal.id}')" title="${done ? 'Click to undo' : 'Check-in today'}" class="streak-check-btn px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm active:scale-95 ${
+            <button onclick="app.toggleCheckIn('${goal.id}')" title="${
+              done
+                ? 'Click to undo'
+                : (!isScheduledToday ? 'Rest day! Click to check-in anyway' : 'Check-in today')
+            }" class="streak-check-btn px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-sm active:scale-95 ${
               done
                 ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-300 hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300'
-                : 'bg-gradient-to-r from-amber-500 via-rose-500 to-pink-500 hover:opacity-95 text-white shadow-rose-500/25'
+                : (!isScheduledToday
+                    ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300'
+                    : 'bg-gradient-to-r from-amber-500 via-rose-500 to-pink-500 hover:opacity-95 text-white shadow-rose-500/25')
             }">
-              ${done ? '✓ Done' : 'Check-in 🔥'}
+              ${done ? '✓ Done' : (!isScheduledToday ? 'Rest Day 💤' : 'Check-in 🔥')}
             </button>
           </div>
         </div>`;
@@ -702,7 +839,7 @@ class AppController {
     // REVERSE / UNDO TODAY'S COMPLETION
     if (isCompletedToday) {
       goal.streak_dates = (goal.streak_dates || []).filter(d => d !== todayStr);
-      goal.streak = StreakEngine.recalculateStreakFromDates(goal.streak_dates, goal.frequency || 1);
+      goal.streak = StreakEngine.recalculateStreakFromDates(goal.streak_dates, goal.frequency || 1, new Date(), goal.frequency_days);
 
       SoundFX.playPop();
       this.renderStats();
@@ -748,7 +885,21 @@ class AppController {
         this.formTargetMode.value = 'tick';
       }
 
+      const isDays = editing.frequency === 'days';
       this.formFrequency.value = editing.frequency || 1;
+      if (isDays) {
+        this.weekdaySelectContainer?.classList.remove('hidden');
+        const days = Array.isArray(editing.frequency_days) ? editing.frequency_days : [];
+        this.weekdayButtons.forEach(btn => {
+          const d = parseInt(btn.dataset.day, 10);
+          btn.classList.toggle('selected', days.includes(d));
+        });
+      } else {
+        this.weekdaySelectContainer?.classList.add('hidden');
+        this.weekdayButtons.forEach(btn => btn.classList.remove('selected'));
+      }
+      this._styleWeekdayButtons();
+
       this.formDeadline.value  = editing.deadline || '';
 
       const themeRadio = document.querySelector(`input[name="goalTheme"][value="${editing.theme || 'garden'}"]`);
@@ -759,6 +910,9 @@ class AppController {
       this.formGoalCategory.value  = 'study';
       this.formTargetMode.value    = 'tick';
       this.formFrequency.value     = '1';
+      this.weekdaySelectContainer?.classList.add('hidden');
+      this.weekdayButtons.forEach(btn => btn.classList.remove('selected'));
+      this._styleWeekdayButtons();
       this.formDeadline.value      = '';
       const def = document.querySelector('input[name="goalTheme"][value="garden"]');
       if (def) def.checked = true;
@@ -781,19 +935,49 @@ class AppController {
     const category = this.formGoalCategory.value;
     const daily_target = this.formTargetMode.value === 'custom' && this.formDailyTarget.value.trim()
       ? this.formDailyTarget.value.trim() : '';
-    const frequency= parseInt(this.formFrequency.value, 10) || 1;
+    const rawFreq  = this.formFrequency.value;
+    const isDays   = rawFreq === 'days';
+    const frequency= isDays ? 'days' : (parseInt(rawFreq, 10) || 1);
+    let frequency_days = [];
+
+    if (isDays) {
+      this.weekdayButtons.forEach(btn => {
+        if (btn.classList.contains('selected')) {
+          frequency_days.push(parseInt(btn.dataset.day, 10));
+        }
+      });
+      if (!frequency_days.length) {
+        this.showToast('⚠️ Please select at least 1 day of the week!');
+        return;
+      }
+      frequency_days.sort((a,b) => ((a===0?7:a)-(b===0?7:b)));
+    }
+
     const deadline = this.formDeadline.value;
     const theme    = document.querySelector('input[name="goalTheme"]:checked')?.value || 'garden';
 
     const idx = this.goals.findIndex(g => g.id === id);
     if (idx >= 0) {
-      this.goals[idx] = { ...this.goals[idx], title, category, daily_target, deadline, frequency, theme };
+      this.goals[idx] = {
+        ...this.goals[idx],
+        title, category, daily_target, deadline, frequency, theme,
+        frequency_days: isDays ? frequency_days : null
+      };
+      this.goals[idx].streak = StreakEngine.recalculateStreakFromDates(
+        this.goals[idx].streak_dates || [],
+        frequency,
+        new Date(),
+        frequency_days
+      );
       this.showToast('Goal updated ✅');
     } else {
-      this.goals.unshift({ id, title, category, daily_target, deadline, frequency, theme,
+      this.goals.unshift({
+        id, title, category, daily_target, deadline, frequency, theme,
+        frequency_days: isDays ? frequency_days : null,
         created_at: StreakEngine.formatDate(),
         streak: { current_streak:0, longest_streak:0, last_completed_date:'' },
-        streak_dates: [] });
+        streak_dates: []
+      });
       this.showToast('Goal created! Tap Check-in 🔥');
     }
 
@@ -840,14 +1024,15 @@ class AppController {
 
     const cur = goal.streak?.current_streak ?? 0;
     const lng = goal.streak?.longest_streak ?? 0;
-    const freq = parseInt(goal.frequency, 10) || 1;
+    const isDays = goal.frequency === 'days';
+    const freq = isDays ? 1 : (parseInt(goal.frequency, 10) || 1);
     this.worldCurrentStreak.textContent = `${cur}t`;
     this.worldLongestStreak.textContent = `${lng}t`;
     if (this.worldGraceText) {
-      this.worldGraceText.textContent = freq === 1 ? '1d' : `${freq}d`;
+      this.worldGraceText.textContent = isDays ? '1d' : (freq === 1 ? '1d' : `${freq}d`);
     }
 
-    const items = StreakEngine.generateWorldItems(goal.streak_dates ?? [], goal.theme, freq);
+    const items = StreakEngine.generateWorldItems(goal.streak_dates ?? [], goal.theme, goal.frequency || 1, new Date(), goal.frequency_days);
     this.currentWorldItems = items;
 
     if (!items.length) {
@@ -916,6 +1101,17 @@ class AppController {
       lbl.classList.toggle('ring-2',         r?.checked ?? false);
       lbl.classList.toggle('ring-indigo-500', r?.checked ?? false);
       lbl.classList.toggle('border-indigo-500', r?.checked ?? false);
+    });
+  }
+
+  _styleWeekdayButtons() {
+    this.weekdayButtons?.forEach(btn => {
+      const isSel = btn.classList.contains('selected');
+      if (isSel) {
+        btn.className = 'weekday-btn selected h-9 rounded-xl border border-indigo-600 bg-indigo-600 text-white font-bold text-xs shadow-xs';
+      } else {
+        btn.className = 'weekday-btn h-9 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs';
+      }
     });
   }
 
